@@ -141,8 +141,6 @@
             htmlEditor.getWrapperElement().style.display = (type === 'html') ? 'block' : 'none';
             cssEditor.getWrapperElement().style.display = (type === 'css') ? 'block' : 'none';
             jsEditor.getWrapperElement().style.display = (type === 'js') ? 'block' : 'none';
-
-            updatePreview();
         }
 
         function updatePreview() {
@@ -190,13 +188,13 @@
         function loadExample(exampleKey) {
             const example = examples[exampleKey];
 
-            // Set content in each editor
+            // Set content in each editor immediately
             htmlEditor.setValue(example.html);
             cssEditor.setValue(example.css);
             jsEditor.setValue(example.js);
 
-            // Show current editor and refresh preview
-            showEditor(currentEditor);
+            // Update the preview immediately after loading example content
+            updatePreview();
         }
 
         htmlEditor.on("change", updatePreview);
@@ -218,7 +216,7 @@
                 });
         });
 
-        updatePreview();
+        // Load the initial editor view
         showEditor('html');
     </script>
 </body>
