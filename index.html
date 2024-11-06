@@ -9,12 +9,8 @@
             font-family: Arial, sans-serif;
             margin: 0;
             display: flex;
-            background-color: #f4f4f4;
             height: 100vh;
-        }
-        h1 {
-            text-align: center;
-            margin-top: 10px;
+            background-color: #f4f4f4;
         }
         .sidebar {
             width: 150px;
@@ -25,6 +21,10 @@
             align-items: center;
             padding-top: 10px;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+        }
+        .sidebar h2 {
+            color: #f4f4f4;
+            margin-bottom: 15px;
         }
         .editor-label {
             padding: 15px;
@@ -39,33 +39,32 @@
             background-color: #4CAF50;
         }
         .main {
-            flex: 1;
             display: flex;
-            flex-direction: column;
-            padding: 20px;
-            gap: 10px;
+            flex: 1;
+            overflow: hidden;
         }
         .editor-container {
-            flex: 1;
+            width: 50%;
             display: flex;
             flex-direction: column;
             align-items: stretch;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
         }
         .editor {
             width: 100%;
-            padding: 10px;
             border: 1px solid #ddd;
             background-color: #fff;
-            height: 300px;
             font-family: monospace;
             box-sizing: border-box;
             resize: vertical;
+            height: 100%;
             display: none;
         }
         .preview-container {
-            width: 100%;
-            flex: 1;
-            border: 1px solid #ddd;
+            width: 50%;
+            border-left: 1px solid #ddd;
             overflow: hidden;
         }
         .preview {
@@ -74,7 +73,7 @@
             border: none;
         }
         #downloadBtn {
-            margin-top: 10px;
+            margin-top: auto;
             padding: 10px 20px;
             background-color: #4CAF50;
             color: white;
@@ -113,7 +112,6 @@
         const jsEditor = document.getElementById("jsEditor");
         const preview = document.getElementById("preview");
 
-        // Show the default editor on page load
         function showEditor(editorId) {
             // Hide all editors
             htmlEditor.style.display = "none";
@@ -171,7 +169,6 @@
             const cssCode = cssEditor.value;
             const jsCode = jsEditor.value;
 
-            // Create a zip file with HTML, CSS, and JS
             const zip = new JSZip();
             zip.file("index.html", htmlCode);
             zip.file("style.css", cssCode);
@@ -188,8 +185,7 @@
 
         // Initial call to set up the preview with default HTML editor shown
         updatePreview();
-        showEditor('htmlEditor'); // Ensure HTML editor is shown on page load
-
+        showEditor('htmlEditor');
     </script>
 
     <!-- JSZip library for creating zip files -->
