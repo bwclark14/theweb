@@ -1,6 +1,6 @@
 // Initialize CodeMirror editor for HTML with syntax highlighting
 const htmlEditor = CodeMirror(document.getElementById('html-editor'), {
-    mode: 'htmlmixed', // HTML mixed mode for combined HTML, CSS, and JS
+    mode: 'html', // HTML mixed mode for combined HTML, CSS, and JS
     theme: 'dracula',  // You can use any theme (e.g., 'dracula', 'monokai')
     lineNumbers: true,
     autoCloseTags: true,  // Automatically closes HTML tags
