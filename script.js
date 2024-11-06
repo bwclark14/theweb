@@ -1,49 +1,40 @@
-// Set the default sample code to load on page load (Sample 1)
-window.addEventListener('DOMContentLoaded', () => {
-    const defaultSample = 'sample1';
-    const code = samples[defaultSample];
-
-    htmlEditor.setValue(code.html.trim());
-    cssEditor.setValue(code.css.trim());
-    jsEditor.setValue(code.js.trim());
-
-    updatePreview();  // Update the preview after loading code
+// Initialize Ace editor for HTML
+const htmlEditor = ace.edit("html-editor");
+htmlEditor.setTheme("ace/theme/dracula");
+htmlEditor.session.setMode("ace/mode/html");
+htmlEditor.setValue("<div class='container'>\n  <h1>Hello World</h1>\n  <p>This is a simple HTML sample.</p>\n</div>");
+htmlEditor.setOptions({
+    fontSize: "14px",
+    showPrintMargin: false,
+    wrap: true,
+    showLineNumbers: true,
+    tabSize: 2
 });
 
-// Initialize CodeMirror editor for HTML with syntax highlighting
-const htmlEditor = CodeMirror(document.getElementById('html-editor'), {
-    mode: 'htmlmixed',  // Use htmlmixed mode for syntax highlighting
-    theme: 'dracula',
-    lineNumbers: true,
-    autoCloseTags: true,
-    tabSize: 2,
-    indentUnit: 2,
-    lineWrapping: true,
-    extraKeys: { "Ctrl-Space": "autocomplete" }
+// Initialize Ace editor for CSS
+const cssEditor = ace.edit("css-editor");
+cssEditor.setTheme("ace/theme/dracula");
+cssEditor.session.setMode("ace/mode/css");
+cssEditor.setValue("h1 {\n    color: blue;\n}");
+cssEditor.setOptions({
+    fontSize: "14px",
+    showPrintMargin: false,
+    wrap: true,
+    showLineNumbers: true,
+    tabSize: 2
 });
 
-// Initialize CodeMirror editor for CSS
-const cssEditor = CodeMirror(document.getElementById('css-editor'), {
-    mode: 'css',  // CSS mode for CSS syntax
-    theme: 'dracula',
-    lineNumbers: true,
-    autoCloseBrackets: true,
-    tabSize: 2,
-    indentUnit: 2,
-    lineWrapping: true,
-    extraKeys: { "Ctrl-Space": "autocomplete" }
-});
-
-// Initialize CodeMirror editor for JavaScript
-const jsEditor = CodeMirror(document.getElementById('js-editor'), {
-    mode: 'javascript',  // JavaScript mode for JS syntax
-    theme: 'dracula',
-    lineNumbers: true,
-    autoCloseBrackets: true,
-    tabSize: 2,
-    indentUnit: 2,
-    lineWrapping: true,
-    extraKeys: { "Ctrl-Space": "autocomplete" }
+// Initialize Ace editor for JavaScript
+const jsEditor = ace.edit("js-editor");
+jsEditor.setTheme("ace/theme/dracula");
+jsEditor.session.setMode("ace/mode/javascript");
+jsEditor.setValue("console.log('Hello from JS!');");
+jsEditor.setOptions({
+    fontSize: "14px",
+    showPrintMargin: false,
+    wrap: true,
+    showLineNumbers: true,
+    tabSize: 2
 });
 
 // Sample code snippets with neat formatting and proper line breaks
@@ -137,9 +128,9 @@ function updatePreview() {
 updatePreview();
 
 // Listen for changes in the editors to update preview dynamically
-htmlEditor.on('change', updatePreview);
-cssEditor.on('change', updatePreview);
-jsEditor.on('change', updatePreview);
+htmlEditor.session.on('change', updatePreview);
+cssEditor.session.on('change', updatePreview);
+jsEditor.session.on('change', updatePreview);
 
 // Tab switching functionality
 document.querySelectorAll('.tab-button').forEach(button => {
