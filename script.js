@@ -50,9 +50,18 @@ const samples = {
 document.getElementById('sample-selector').addEventListener('change', (event) => {
     const sample = event.target.value;
     const code = samples[sample];
+
+    // Alert user and load code into editors
+    alert("Loading HTML code into the HTML editor...");
     htmlEditor.setValue(code.html);
+    
+    alert("Loading CSS code into the CSS editor...");
     cssEditor.setValue(code.css);
+    
+    alert("Loading JavaScript code into the JavaScript editor...");
     jsEditor.setValue(code.js);
+    
+    // Update preview after code is loaded
     updatePreview();
 });
 
@@ -122,4 +131,3 @@ document.getElementById('popoutBtn').addEventListener('click', () => {
         iframe.style.border = 'none';
     };
 });
-
