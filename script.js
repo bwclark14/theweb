@@ -7,8 +7,10 @@ const htmlEditor = CodeMirror(document.getElementById('html-editor'), {
     tabSize: 2,
     indentUnit: 2,
     lineWrapping: true,
-    extraKeys: { "Ctrl-Space": "autocomplete" } // Optional: enables autocomplete on Ctrl+Space
+    extraKeys: { "Ctrl-Space": "autocomplete" }, // Optional: enables autocomplete on Ctrl+Space
+    indentWithTabs: true
 });
+
 const cssEditor = CodeMirror(document.getElementById('css-editor'), {
     mode: 'css',
     theme: 'dracula',
@@ -17,8 +19,10 @@ const cssEditor = CodeMirror(document.getElementById('css-editor'), {
     tabSize: 2,
     indentUnit: 2,
     lineWrapping: true,
-    extraKeys: { "Ctrl-Space": "autocomplete" }
+    extraKeys: { "Ctrl-Space": "autocomplete" },
+    indentWithTabs: true
 });
+
 const jsEditor = CodeMirror(document.getElementById('js-editor'), {
     mode: 'javascript',
     theme: 'dracula',
@@ -27,7 +31,8 @@ const jsEditor = CodeMirror(document.getElementById('js-editor'), {
     tabSize: 2,
     indentUnit: 2,
     lineWrapping: true,
-    extraKeys: { "Ctrl-Space": "autocomplete" }
+    extraKeys: { "Ctrl-Space": "autocomplete" },
+    indentWithTabs: true
 });
 
 // Sample code snippets with neat formatting and proper line breaks
@@ -119,6 +124,11 @@ function updatePreview() {
 
 // Initial preview update
 updatePreview();
+
+// Listen for changes in the editors and update the preview dynamically
+htmlEditor.on('change', updatePreview);
+cssEditor.on('change', updatePreview);
+jsEditor.on('change', updatePreview);
 
 // Tab switch functionality
 document.querySelectorAll('.tab-button').forEach(button => {
