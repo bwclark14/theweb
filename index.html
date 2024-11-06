@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live HTML, CSS, JS Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -47,20 +48,10 @@
             width: 50%;
             display: flex;
             flex-direction: column;
-            align-items: stretch;
             padding: 20px;
             box-sizing: border-box;
             overflow-y: auto;
-        }
-        .editor {
-            width: 100%;
-            border: 1px solid #ddd;
-            background-color: #fff;
-            font-family: monospace;
-            box-sizing: border-box;
-            resize: vertical;
             height: 100%;
-            display: none;
         }
         .preview-container {
             width: 50%;
@@ -89,57 +80,73 @@
 
     <div class="sidebar">
         <h2>Editors</h2>
-        <div class="editor-label active" onclick="showEditor('htmlEditor')">HTML</div>
-        <div class="editor-label" onclick="showEditor('cssEditor')">CSS</div>
-        <div class="editor-label" onclick="showEditor('jsEditor')">JavaScript</div>
+        <div class="editor-label active" onclick="showEditor('html')">HTML</div>
+        <div class="editor-label" onclick="showEditor('css')">CSS</div>
+        <div class="editor-label" onclick="showEditor('js')">JavaScript</div>
         <button id="downloadBtn">Download Code</button>
     </div>
 
     <div class="main">
         <div class="editor-container">
-            <textarea id="htmlEditor" class="editor" placeholder="Write your HTML here..." style="display: block;"></textarea>
-            <textarea id="cssEditor" class="editor" placeholder="Write your CSS here..."></textarea>
-            <textarea id="jsEditor" class="editor" placeholder="Write your JavaScript here..."></textarea>
+            <textarea id="htmlEditor" placeholder="Write your HTML here..."></textarea>
+            <textarea id="cssEditor" placeholder="Write your CSS here..." style="display: none;"></textarea>
+            <textarea id="jsEditor" placeholder="Write your JavaScript here..." style="display: none;"></textarea>
         </div>
         <div class="preview-container">
             <iframe id="preview" class="preview"></iframe>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
     <script>
-        const htmlEditor = document.getElementById("htmlEditor");
-        const cssEditor = document.getElementById("cssEditor");
-        const jsEditor = document.getElementById("jsEditor");
-        const preview = document.getElementById("preview");
+        let currentEditor = 'html';
 
-        function showEditor(editorId) {
-            // Hide all editors
-            htmlEditor.style.display = "none";
-            cssEditor.style.display = "none";
-            jsEditor.style.display = "none";
+        // Initialize CodeMirror instances for each editor
+        const htmlEditor = CodeMirror.fromTextArea(document.getElementById("htmlEditor"), {
+            mode: "xml",
+            theme: "default",
+            lineNumbers: true,
+            autoCloseTags: true,
+            lineWrapping: true
+        });
+        const cssEditor = CodeMirror.fromTextArea(document.getElementById("cssEditor"), {
+            mode: "css",
+            theme: "default",
+            lineNumbers: true,
+            lineWrapping: true
+        });
+        const jsEditor = CodeMirror.fromTextArea(document.getElementById("jsEditor"), {
+            mode: "javascript",
+            theme: "default",
+            lineNumbers: true,
+            lineWrapping: true
+        });
 
-            // Remove active class from all labels
+        // Show the selected editor and hide others
+        function showEditor(type) {
+            currentEditor = type;
             document.querySelectorAll(".editor-label").forEach(label => label.classList.remove("active"));
+            document.querySelector(`.editor-label[onclick="showEditor('${type}')"]`).classList.add("active");
 
-            // Show the selected editor
-            const selectedEditor = document.getElementById(editorId);
-            selectedEditor.style.display = "block";
+            htmlEditor.getWrapperElement().style.display = (type === 'html') ? 'block' : 'none';
+            cssEditor.getWrapperElement().style.display = (type === 'css') ? 'block' : 'none';
+            jsEditor.getWrapperElement().style.display = (type === 'js') ? 'block' : 'none';
 
-            // Add active class to the selected label
-            const activeLabel = document.querySelector(`.editor-label[onclick="showEditor('${editorId}')"]`);
-            activeLabel.classList.add("active");
-
-            // Update preview after switching editors
             updatePreview();
         }
 
         // Function to update the preview
         function updatePreview() {
-            const html = htmlEditor.value;
-            const css = cssEditor.value;
-            const js = jsEditor.value;
+            const html = htmlEditor.getValue();
+            const css = cssEditor.getValue();
+            const js = jsEditor.getValue();
 
-            const previewDoc = preview.contentWindow.document;
+            const previewDoc = document.getElementById("preview").contentWindow.document;
             previewDoc.open();
             previewDoc.write(`
                 <!DOCTYPE html>
@@ -158,24 +165,20 @@
             previewDoc.close();
         }
 
-        // Event listeners for each editor to update preview dynamically
-        htmlEditor.addEventListener("input", updatePreview);
-        cssEditor.addEventListener("input", updatePreview);
-        jsEditor.addEventListener("input", updatePreview);
+        // Update preview on each editor's content change
+        htmlEditor.on("change", updatePreview);
+        cssEditor.on("change", updatePreview);
+        jsEditor.on("change", updatePreview);
 
         // Download function to save all code as a zip
         document.getElementById('downloadBtn').addEventListener('click', () => {
-            const htmlCode = htmlEditor.value;
-            const cssCode = cssEditor.value;
-            const jsCode = jsEditor.value;
-
             const zip = new JSZip();
-            zip.file("index.html", htmlCode);
-            zip.file("style.css", cssCode);
-            zip.file("script.js", jsCode);
+            zip.file("index.html", htmlEditor.getValue());
+            zip.file("style.css", cssEditor.getValue());
+            zip.file("script.js", jsEditor.getValue());
 
             zip.generateAsync({ type: "blob" })
-                .then(function (content) {
+                .then(content => {
                     const a = document.createElement('a');
                     a.href = URL.createObjectURL(content);
                     a.download = 'project.zip';
@@ -183,13 +186,9 @@
                 });
         });
 
-        // Initial call to set up the preview with default HTML editor shown
+        // Initialize with the HTML editor open and preview updated
         updatePreview();
-        showEditor('htmlEditor');
+        showEditor('html');
     </script>
-
-    <!-- JSZip library for creating zip files -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
 </body>
 </html>
