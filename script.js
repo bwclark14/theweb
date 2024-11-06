@@ -166,7 +166,7 @@ document.addEventListener('mouseup', () => {
 // Popout button functionality
 document.getElementById('popoutBtn').addEventListener('click', () => {
     // Open a new window with fullscreen size
-    const newWindow = window.open('', '', 'width=' + screen.width + ',height=' + screen.height + ',top=0,left=0,scrollbars=no,status=no,toolbar=no,location=no,menubar=no');
+    const newWindow = window.open('', '', 'width=' + screen.width + ',height=' + screen.height + ',top=0,left=0,scrollbars=no,status=no,toolbar=no');
 
     // Write the preview iframe content to the new window
     const previewFrame = document.getElementById('preview');
