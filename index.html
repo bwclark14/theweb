@@ -15,46 +15,52 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.64.0/mode/css/css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.64.0/mode/javascript/javascript.min.js"></script>
 
-    <link rel="stylesheet" href="style.css"></script>
-
-
+    <!-- Link to the custom CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="editor-container">
-    <!-- Tabs for switching between HTML, CSS, and JS editors -->
-    <div>
-        <button class="tab-button active" data-tab="html">HTML</button>
-        <button class="tab-button" data-tab="css">CSS</button>
-        <button class="tab-button" data-tab="js">JavaScript</button>
-    </div>
-
-    <!-- HTML, CSS, JS Code Editors -->
-    <div id="html-editor" class="code-editor active"></div>
-    <div id="css-editor" class="code-editor"></div>
-    <div id="js-editor" class="code-editor"></div>
-
-    <!-- Popout Button -->
-    <button id="popoutBtn">Popout Preview</button>
-</div>
-
-<div class="resize-handle"></div>
-
-<div class="preview-container">
-    <!-- Preview window -->
-    <iframe id="preview"></iframe>
-</div>
-
-<!-- Select sample code -->
-<div>
-    <label for="sample-selector">Choose a sample:</label>
+<!-- Banner Header -->
+<header class="header">
+    <h1>Live Code Editor</h1>
+    <label for="sample-selector">Choose a Sample Site:</label>
     <select id="sample-selector">
         <option value="sample1">Sample 1</option>
         <option value="sample2">Sample 2</option>
         <option value="sample3">Sample 3</option>
     </select>
+</header>
+
+<div class="container">
+
+    <!-- Editor Section (Tabs and Code Editors) -->
+    <div class="editor-container">
+        <div class="tabs">
+            <button class="tab-button active" data-tab="html">HTML</button>
+            <button class="tab-button" data-tab="css">CSS</button>
+            <button class="tab-button" data-tab="js">JavaScript</button>
+        </div>
+
+        <!-- HTML, CSS, JS Code Editors -->
+        <div id="html-editor" class="code-editor active"></div>
+        <div id="css-editor" class="code-editor"></div>
+        <div id="js-editor" class="code-editor"></div>
+
+        <!-- Popout Button -->
+        <button id="popoutBtn">Popout Preview</button>
+    </div>
+
+    <!-- Resize Handle -->
+    <div class="resize-handle"></div>
+
+    <!-- Preview Section -->
+    <div class="preview-container">
+        <iframe id="preview"></iframe>
+    </div>
+
 </div>
 
+<!-- External JavaScript -->
 <script src="script.js"></script>
 
 </body>
