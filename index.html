@@ -3,250 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live HTML, CSS, JS Editor</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 15px 20px;
-            text-align: center;
-        }
-        .container {
-            display: flex;
-            flex: 1;
-        }
-        .sidebar {
-            width: 150px;
-            background-color: #333;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            padding-top: 10px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-            height: 100%;
-        }
-        .sidebar h2 {
-            color: #f4f4f4;
-            margin-bottom: 15px;
-            margin-left: 15px;
-        }
-        .editor-label, .example-label {
-            padding: 10px 15px;
-            cursor: pointer;
-            width: 100%;
-            text-align: center;
-            background-color: #444;
-            margin: 5px 0;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
-        }
-        .editor-label:hover, .editor-label.active {
-            background-color: #4CAF50;
-            transform: scale(1.1);
-        }
-        .editor-label {
-            display: block;
-            text-align: left;
-            padding-left: 20px;
-        }
-        .editor-tabs {
-            display: flex;
-            border-bottom: 2px solid #ccc;
-        }
-        .editor-tabs div {
-            padding: 10px 20px;
-            cursor: pointer;
-            flex: 1;
-            text-align: center;
-            background-color: #ddd;
-            transition: background-color 0.3s;
-        }
-        .editor-tabs div.active {
-            background-color: #4CAF50;
-            color: white;
-        }
-        .main {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-        .editor-container {
-            width: 50%;
-            display: flex;
-            flex-direction: column;
-            padding: 10px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            height: 100%;
-        }
-        .code-editor {
-            margin-bottom: 15px;
-            height: calc(100% / 3 - 10px);
-            display: none;
-        }
-        .code-editor.focused {
-            display: block;
-        }
-        .preview-container {
-            width: 50%;
-            border-left: 1px solid #ddd;
-            overflow: hidden;
-        }
-        .preview {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        #downloadBtn {
-            margin-top: auto;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        #downloadBtn:hover {
-            background-color: #45a049;
-        }
-        #previewControls {
-            margin-top: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-        #openPreviewBtn, #minimizePreviewBtn {
-            padding: 5px 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        #minimizePreviewBtn {
-            background-color: #ff8c00;
-        }
-        #openPreviewBtn:hover, #minimizePreviewBtn:hover {
-            background-color: #45a049;
-        }
-        #minimizePreviewBtn.hidden {
-            display: none;
-        }
-    </style>
+    <title>Live Code Editor</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header>
-        <h1>Live HTML, CSS, JS Editor</h1>
-    </header>
-
-    <div class="container">
-        <div class="sidebar">
-            <h2>Editors</h2>
-            <div class="editor-tabs">
-                <div id="htmlTab" class="active" onclick="focusEditor('html')">HTML</div>
-                <div id="cssTab" onclick="focusEditor('css')">CSS</div>
-                <div id="jsTab" onclick="focusEditor('js')">JavaScript</div>
-            </div>
-
-            <h2>Examples</h2>
-            <select id="exampleSelect" onchange="loadExampleFromSelect()">
-                <option value="">Select a sample site</option>
-                <option value="example1">Simple Landing Page</option>
-                <option value="example2">Interactive Button</option>
-                <option value="example3">Basic Form</option>
-            </select>
-
-            <button id="downloadBtn">Download Code</button>
+<div class="container">
+    <div class="editor-container">
+        <div class="tabs">
+            <button class="tab-button active" data-tab="html">HTML</button>
+            <button class="tab-button" data-tab="css">CSS</button>
+            <button class="tab-button" data-tab="js">JavaScript</button>
         </div>
 
-        <div class="main">
-            <div class="editor-container">
-                <div id="htmlEditorContainer" class="code-editor focused">
-                    <textarea id="htmlEditor" placeholder="Write your HTML here..."></textarea>
-                </div>
-                <div id="cssEditorContainer" class="code-editor">
-                    <textarea id="cssEditor" placeholder="Write your CSS here..."></textarea>
-                </div>
-                <div id="jsEditorContainer" class="code-editor">
-                    <textarea id="jsEditor" placeholder="Write your JavaScript here..."></textarea>
-                </div>
-            </div>
-            <div class="preview-container">
-                <iframe id="preview" class="preview"></iframe>
-                <div id="previewControls">
-                    <button id="openPreviewBtn" onclick="openPreviewWindow()">Open Preview in New Window</button>
-                    <button id="minimizePreviewBtn" onclick="togglePreviewMinimize()">Minimize Preview</button>
-                </div>
-            </div>
+        <div class="editor">
+            <div id="html-editor" class="code-editor active"></div>
+            <div id="css-editor" class="code-editor"></div>
+            <div id="js-editor" class="code-editor"></div>
+        </div>
+
+        <div class="sample-selector">
+            <select id="sample-selector">
+                <option value="sample1">Sample 1</option>
+                <option value="sample2">Sample 2</option>
+                <option value="sample3">Sample 3</option>
+            </select>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/xml/xml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/css/css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <div class="preview-container">
+        <div class="preview-header">
+            <div class="resize-handle"></div>
+            <button class="popout-btn" id="popoutBtn">Popout</button>
+        </div>
+        <iframe id="preview" class="preview" srcdoc=""></iframe>
+    </div>
+</div>
 
-    <script>
-        const htmlEditor = CodeMirror.fromTextArea(document.getElementById("htmlEditor"), {
-            mode: "xml",
-            theme: "default",
-            lineNumbers: true,
-            autoCloseTags: true,
-            lineWrapping: true
-        });
-        const cssEditor = CodeMirror.fromTextArea(document.getElementById("cssEditor"), {
-            mode: "css",
-            theme: "default",
-            lineNumbers: true,
-            lineWrapping: true
-        });
-        const jsEditor = CodeMirror.fromTextArea(document.getElementById("jsEditor"), {
-            mode: "javascript",
-            theme: "default",
-            lineNumbers: true,
-            lineWrapping: true
-        });
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+<script src="script.js"></script>
 
-        let previewWindow = null;
-
-        function focusEditor(type) {
-            // Remove focus from all editors
-            document.querySelectorAll('.editor-tabs div').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(`${type}Tab`).classList.add('active');
-
-            // Hide all editor containers
-            document.querySelectorAll('.code-editor').forEach(editor => editor.classList.remove('focused'));
-
-            // Focus the selected editor
-            document.getElementById(`${type}EditorContainer`).classList.add('focused');
-        }
-
-        function updatePreview() {
-            const html = htmlEditor.getValue();
-            const css = cssEditor.getValue();
-            const js = jsEditor.getValue();
-
-            const previewDoc = document.getElementById("preview").contentWindow.document;
-            previewDoc.open();
-            previewDoc.write(`
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <style>${css}</style>
-                </head>
-                <body>
-                    ${html}
-                    <script>${js}<\/script>
-                </body>
-                </html>
+</body>
+</html>
