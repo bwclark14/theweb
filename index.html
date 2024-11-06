@@ -19,13 +19,15 @@
             color: white;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
             padding-top: 10px;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            height: 100%;
         }
         .sidebar h2 {
             color: #f4f4f4;
             margin-bottom: 15px;
+            margin-left: 15px;
         }
         .editor-label, .example-label {
             padding: 10px 15px;
@@ -35,10 +37,16 @@
             background-color: #444;
             margin: 5px 0;
             font-size: 0.9em;
+            transition: all 0.3s ease;
         }
-        .editor-label:hover, .example-label:hover,
-        .editor-label.active {
+        .editor-label:hover, .editor-label.active {
             background-color: #4CAF50;
+            transform: scale(1.1);
+        }
+        .editor-label {
+            display: block;
+            text-align: left;
+            padding-left: 20px;
         }
         .main {
             display: flex;
@@ -49,10 +57,18 @@
             width: 50%;
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 10px;
             box-sizing: border-box;
             overflow-y: auto;
             height: 100%;
+        }
+        .code-editor {
+            margin-bottom: 15px;
+            height: calc(100% / 3 - 10px);
+            display: none;
+        }
+        .code-editor.focused {
+            display: block;
         }
         .preview-container {
             width: 50%;
@@ -81,9 +97,9 @@
 
     <div class="sidebar">
         <h2>Editors</h2>
-        <div class="editor-label active" onclick="showEditor('html')">HTML</div>
-        <div class="editor-label" onclick="showEditor('css')">CSS</div>
-        <div class="editor-label" onclick="showEditor('js')">JavaScript</div>
+        <div id="htmlTab" class="editor-label active" onclick="focusEditor('html')">HTML</div>
+        <div id="cssTab" class="editor-label" onclick="focusEditor('css')">CSS</div>
+        <div id="jsTab" class="editor-label" onclick="focusEditor('js')">JavaScript</div>
         
         <h2>Examples</h2>
         <div class="example-label" onclick="loadExample('example1')">Simple Landing Page</div>
@@ -95,9 +111,15 @@
 
     <div class="main">
         <div class="editor-container">
-            <textarea id="htmlEditor" placeholder="Write your HTML here..."></textarea>
-            <textarea id="cssEditor" placeholder="Write your CSS here..." style="display: none;"></textarea>
-            <textarea id="jsEditor" placeholder="Write your JavaScript here..." style="display: none;"></textarea>
+            <div id="htmlEditorContainer" class="code-editor focused">
+                <textarea id="htmlEditor" placeholder="Write your HTML here..."></textarea>
+            </div>
+            <div id="cssEditorContainer" class="code-editor">
+                <textarea id="cssEditor" placeholder="Write your CSS here..."></textarea>
+            </div>
+            <div id="jsEditorContainer" class="code-editor">
+                <textarea id="jsEditor" placeholder="Write your JavaScript here..."></textarea>
+            </div>
         </div>
         <div class="preview-container">
             <iframe id="preview" class="preview"></iframe>
@@ -107,12 +129,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/xml/xml.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/css/css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajaxlibs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
     <script>
-        let currentEditor = 'html';
-
         const htmlEditor = CodeMirror.fromTextArea(document.getElementById("htmlEditor"), {
             mode: "xml",
             theme: "default",
@@ -133,14 +153,16 @@
             lineWrapping: true
         });
 
-        function showEditor(type) {
-            currentEditor = type;
-            document.querySelectorAll(".editor-label").forEach(label => label.classList.remove("active"));
-            document.querySelector(`.editor-label[onclick="showEditor('${type}')"]`).classList.add("active");
+        function focusEditor(type) {
+            // Remove focus from all editors
+            document.querySelectorAll('.editor-label').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(`${type}Tab`).classList.add('active');
 
-            htmlEditor.getWrapperElement().style.display = (type === 'html') ? 'block' : 'none';
-            cssEditor.getWrapperElement().style.display = (type === 'css') ? 'block' : 'none';
-            jsEditor.getWrapperElement().style.display = (type === 'js') ? 'block' : 'none';
+            // Hide all editor containers
+            document.querySelectorAll('.code-editor').forEach(editor => editor.classList.remove('focused'));
+
+            // Focus the selected editor
+            document.getElementById(`${type}EditorContainer`).classList.add('focused');
         }
 
         function updatePreview() {
@@ -187,13 +209,9 @@
 
         function loadExample(exampleKey) {
             const example = examples[exampleKey];
-
-            // Set content in each editor immediately
             htmlEditor.setValue(example.html);
             cssEditor.setValue(example.css);
             jsEditor.setValue(example.js);
-
-            // Update the preview immediately after loading example content
             updatePreview();
         }
 
@@ -216,8 +234,8 @@
                 });
         });
 
-        // Load the initial editor view
-        showEditor('html');
+        // Initial focus on HTML editor
+        focusEditor('html');
     </script>
 </body>
 </html>
