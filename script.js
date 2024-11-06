@@ -1,17 +1,18 @@
-// Get the editor elements
+// Initialize CodeMirror editor for HTML with syntax highlighting
 const htmlEditor = CodeMirror(document.getElementById('html-editor'), {
-    mode: 'html', // Use 'htmlmixed' mode for HTML, CSS, and JS
-    theme: 'dracula', // Choose your theme (e.g., 'dracula', 'default')
+    mode: 'htmlmixed', // HTML mixed mode for combined HTML, CSS, and JS
+    theme: 'dracula',  // You can use any theme (e.g., 'dracula', 'monokai')
     lineNumbers: true,
-    autoCloseTags: true,
+    autoCloseTags: true,  // Automatically closes HTML tags
     tabSize: 2,
     indentUnit: 2,
-    lineWrapping: true,
+    lineWrapping: true,  // Wrap lines if they are too long
     extraKeys: { "Ctrl-Space": "autocomplete" }
 });
 
+// Initialize CodeMirror editor for CSS
 const cssEditor = CodeMirror(document.getElementById('css-editor'), {
-    mode: 'css', // CSS mode
+    mode: 'css',  // CSS mode for CSS syntax
     theme: 'dracula',
     lineNumbers: true,
     autoCloseBrackets: true,
@@ -21,8 +22,9 @@ const cssEditor = CodeMirror(document.getElementById('css-editor'), {
     extraKeys: { "Ctrl-Space": "autocomplete" }
 });
 
+// Initialize CodeMirror editor for JavaScript
 const jsEditor = CodeMirror(document.getElementById('js-editor'), {
-    mode: 'javascript', // JavaScript mode
+    mode: 'javascript',  // JavaScript mode for JS syntax
     theme: 'dracula',
     lineNumbers: true,
     autoCloseBrackets: true,
@@ -96,13 +98,13 @@ document.getElementById('sample-selector').addEventListener('change', (event) =>
 
     // Alert user and load code into editors
     alert("Loading HTML code into the HTML editor...");
-    htmlEditor.setValue(code.html.trim());
+    htmlEditor.setValue(code.html.trim());  // Load HTML code into the editor
     
     alert("Loading CSS code into the CSS editor...");
-    cssEditor.setValue(code.css.trim());
+    cssEditor.setValue(code.css.trim());  // Load CSS code into the editor
     
     alert("Loading JavaScript code into the JavaScript editor...");
-    jsEditor.setValue(code.js.trim());
+    jsEditor.setValue(code.js.trim());  // Load JS code into the editor
     
     // Update the preview after loading the code
     updatePreview();
