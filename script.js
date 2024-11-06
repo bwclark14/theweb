@@ -1,38 +1,35 @@
 // Get the editor elements
 const htmlEditor = CodeMirror(document.getElementById('html-editor'), {
-    mode: 'htmlmixed', // Use 'htmlmixed' mode for HTML and embedded scripts
-    theme: 'dracula', // Change this to another theme if desired
+    mode: 'htmlmixed', // Use 'htmlmixed' mode for HTML, CSS, and JS
+    theme: 'dracula', // Choose your theme (e.g., 'dracula', 'default')
     lineNumbers: true,
     autoCloseTags: true,
     tabSize: 2,
     indentUnit: 2,
     lineWrapping: true,
-    extraKeys: { "Ctrl-Space": "autocomplete" }, // Optional: enables autocomplete on Ctrl+Space
-    indentWithTabs: true
+    extraKeys: { "Ctrl-Space": "autocomplete" }
 });
 
 const cssEditor = CodeMirror(document.getElementById('css-editor'), {
-    mode: 'css',
+    mode: 'css', // CSS mode
     theme: 'dracula',
     lineNumbers: true,
     autoCloseBrackets: true,
     tabSize: 2,
     indentUnit: 2,
     lineWrapping: true,
-    extraKeys: { "Ctrl-Space": "autocomplete" },
-    indentWithTabs: true
+    extraKeys: { "Ctrl-Space": "autocomplete" }
 });
 
 const jsEditor = CodeMirror(document.getElementById('js-editor'), {
-    mode: 'javascript',
+    mode: 'javascript', // JavaScript mode
     theme: 'dracula',
     lineNumbers: true,
     autoCloseBrackets: true,
     tabSize: 2,
     indentUnit: 2,
     lineWrapping: true,
-    extraKeys: { "Ctrl-Space": "autocomplete" },
-    indentWithTabs: true
+    extraKeys: { "Ctrl-Space": "autocomplete" }
 });
 
 // Sample code snippets with neat formatting and proper line breaks
@@ -97,17 +94,12 @@ document.getElementById('sample-selector').addEventListener('change', (event) =>
     const sample = event.target.value;
     const code = samples[sample];
 
-    // Alert user and load code into editors
-    alert("Loading HTML code into the HTML editor...");
+    // Load code into editors
     htmlEditor.setValue(code.html.trim());
-    
-    alert("Loading CSS code into the CSS editor...");
     cssEditor.setValue(code.css.trim());
-    
-    alert("Loading JavaScript code into the JavaScript editor...");
     jsEditor.setValue(code.js.trim());
-    
-    // Update preview after code is loaded
+
+    // Update the preview after loading the code
     updatePreview();
 });
 
@@ -119,25 +111,27 @@ function updatePreview() {
     const fullContent = htmlContent + cssContent + jsContent;
 
     const previewFrame = document.getElementById('preview');
-    previewFrame.srcdoc = fullContent;
+    previewFrame.srcdoc = fullContent; // Inject the code into the iframe
 }
 
 // Initial preview update
 updatePreview();
 
-// Listen for changes in the editors and update the preview dynamically
+// Listen for changes in the editors to update preview dynamically
 htmlEditor.on('change', updatePreview);
 cssEditor.on('change', updatePreview);
 jsEditor.on('change', updatePreview);
 
-// Tab switch functionality
+// Tab switching functionality
 document.querySelectorAll('.tab-button').forEach(button => {
     button.addEventListener('click', (event) => {
         const tab = event.target.dataset.tab;
 
+        // Remove active class from all buttons
         document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
 
+        // Show the corresponding editor
         document.querySelectorAll('.code-editor').forEach(editor => editor.classList.remove('active'));
         document.getElementById(`${tab}-editor`).classList.add('active');
     });
@@ -162,23 +156,4 @@ document.addEventListener('mousemove', (e) => {
 document.addEventListener('mouseup', () => {
     isResizing = false;
     document.body.style.cursor = 'default';
-});
-
-// Popout button functionality
-document.getElementById('popoutBtn').addEventListener('click', () => {
-    // Open a new window with fullscreen size
-    const newWindow = window.open('', '', 'width=' + screen.width + ',height=' + screen.height + ',top=0,left=0,scrollbars=no,status=no,toolbar=no,location=no,menubar=no');
-
-    // Write the preview iframe content to the new window
-    const previewFrame = document.getElementById('preview');
-    newWindow.document.write('<html><head><title>Live Preview</title></head><body style="margin:0; padding:0; overflow:hidden;">' + previewFrame.outerHTML + '</body></html>');
-    newWindow.document.close();
-
-    // Optional: Add CSS to make the iframe fill the new window
-    newWindow.onload = () => {
-        const iframe = newWindow.document.querySelector('iframe');
-        iframe.style.width = '100%';
-        iframe.style.height = '100vh';
-        iframe.style.border = 'none';
-    };
 });
