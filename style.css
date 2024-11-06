@@ -1,8 +1,10 @@
+/* Body and Layout */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     display: flex;
+    flex-direction: column;
     height: 100vh;
     background-color: #f4f4f4;
 }
@@ -11,6 +13,7 @@ body {
     display: flex;
     width: 100%;
     height: 100%;
+    margin-top: 20px;
 }
 
 .editor-container {
@@ -23,6 +26,7 @@ body {
 
 .tabs {
     display: flex;
+    margin-bottom: 10px;
 }
 
 .tab-button {
@@ -38,24 +42,15 @@ body {
     background-color: #007BFF;
 }
 
-.editor {
+.code-editor {
+    display: none;
     flex: 1;
     margin-top: 10px;
 }
 
-.code-editor {
-    display: none;
-    flex: 1; /* Ensure it takes full available height */
-}
-
 .code-editor.active {
     display: block;
-    height: 100%; /* Ensure editor takes the full height of the container */
-}
-
-.sample-selector {
-    margin-top: 10px;
-    text-align: center;
+    height: 100%; /* Ensures the editor fills the space */
 }
 
 .preview-container {
@@ -86,25 +81,41 @@ body {
     cursor: pointer;
 }
 
+.popout-btn:hover {
+    background-color: #0056b3;
+}
+
 .preview {
     flex: 1;
     border: none;
 }
 
-.popout-btn:hover {
-    background-color: #0056b3;
-}
-
-/* Ensure the iframe (preview) is responsive */
-.preview iframe {
+iframe {
     width: 100%;
     height: 100%;
     border: none;
 }
 
-/* Style for the editor (CodeMirror) content area */
+/* Header Styles */
+header {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+header select {
+    padding: 5px;
+    background-color: #444;
+    color: white;
+    border: none;
+    margin-left: 10px;
+    font-size: 16px;
+}
+
+/* CodeMirror Styling */
 .CodeMirror {
-    border: 1px solid #ddd;  /* Add border for editor */
+    border: 1px solid #ddd;
     border-radius: 5px;
-    height: 100%; /* Full height for the editor */
+    height: 100%; /* Ensures CodeMirror editor expands fully */
 }
