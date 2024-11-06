@@ -77,27 +77,23 @@
             const css = cssEditor.value;
             const js = jsEditor.value;
 
-            // Create the content to be written to the iframe
-            const content = `
+            const previewDoc = preview.contentWindow.document;
+            previewDoc.open();
+            previewDoc.write(`
                 <!DOCTYPE html>
                 <html lang="en">
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <style>${css}</style>
-                    </head>
-                    <body>
-                        ${html}
-                        <script>${js}</script>
-                    </body>
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>${css}</style>
+                </head>
+                <body>
+                    ${html}
+                    <script>${js}<\/script>
+                </body>
                 </html>
-            `;
-
-            // Get the iframe document and write the new content
-            const iframeDoc = preview.contentDocument || preview.contentWindow.document;
-            iframeDoc.open();
-            iframeDoc.write(content);
-            iframeDoc.close();
+            `);
+            previewDoc.close();
         }
 
         // Event listeners for each editor to update preview dynamically
