@@ -50,7 +50,7 @@ body {
 
 .code-editor.active {
     display: block;
-    height: 100%; /* Ensures the editor fills the space */
+    height: 100%;
 }
 
 .preview-container {
@@ -117,5 +117,15 @@ header select {
 .CodeMirror {
     border: 1px solid #ddd;
     border-radius: 5px;
-    height: 100%; /* Ensures CodeMirror editor expands fully */
+    height: 100%;
+    width: 100%;
+}
+
+.CodeMirror-gutter {
+    width: 40px; /* Give enough width for the line numbers */
+}
+
+/* Adjust CodeMirror editor size to avoid overlap */
+.CodeMirror-lines {
+    padding-left: 40px; /* This ensures code doesn't overlap the line numbers */
 }
