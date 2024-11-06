@@ -121,16 +121,17 @@ header select {
     width: 100%;
 }
 
-/* Set the gutter width and ensure it is left-aligned */
+
+/* Set gutter width and ensure proper alignment with code */
 .CodeMirror-gutter {
-    width: 40px;  /* Adequate width for line numbers */
-    text-align: left; /* Ensure the line numbers are left-aligned */
+    width: 50px;  /* Increase gutter width to ensure enough space for line numbers */
+    text-align: left;
 }
 
-/* Ensure content doesn't overlap with gutter */
 .CodeMirror-lines {
-    padding-left: 40px; /* Match the gutter width */
+    padding-left: 50px;  /* Match the gutter width */
 }
+
 
 /* Optional: Add a background color for line numbers for contrast */
 .CodeMirror-gutter-background {
