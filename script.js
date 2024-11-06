@@ -1,6 +1,6 @@
 // Get the editor elements
 const htmlEditor = CodeMirror(document.getElementById('html-editor'), {
-    mode: 'htmlmixed', // Use 'htmlmixed' mode for HTML, CSS, and JS
+    mode: 'html', // Use 'htmlmixed' mode for HTML, CSS, and JS
     theme: 'dracula', // Choose your theme (e.g., 'dracula', 'default')
     lineNumbers: true,
     autoCloseTags: true,
