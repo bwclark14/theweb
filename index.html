@@ -113,6 +113,7 @@
     <script>
         let currentEditor = 'html';
 
+        // Initialize CodeMirror editors for HTML, CSS, and JavaScript
         const htmlEditor = CodeMirror.fromTextArea(document.getElementById("htmlEditor"), {
             mode: "xml",
             theme: "default",
@@ -169,7 +170,7 @@
             previewDoc.close();
         }
 
-        // Code examples
+        // Example templates
         const examples = {
             example1: {
                 html: "<h1>Welcome to My Site</h1><p>This is a simple landing page.</p>",
@@ -190,9 +191,12 @@
 
         function loadExample(exampleKey) {
             const example = examples[exampleKey];
+
             htmlEditor.setValue(example.html);
             cssEditor.setValue(example.css);
             jsEditor.setValue(example.js);
+
+            // Refresh preview after loading example
             updatePreview();
         }
 
