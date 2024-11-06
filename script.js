@@ -1,12 +1,13 @@
 // Get the editor elements
 const htmlEditor = CodeMirror(document.getElementById('html-editor'), {
     mode: 'htmlmixed',
-    theme: 'dracula',
+    theme: 'dracula', // Change this to another theme if desired
     lineNumbers: true,
     autoCloseTags: true,
     tabSize: 2,
     indentUnit: 2,
     lineWrapping: true,
+    extraKeys: { "Ctrl-Space": "autocomplete" } // Optional: enables autocomplete on Ctrl+Space
 });
 const cssEditor = CodeMirror(document.getElementById('css-editor'), {
     mode: 'css',
@@ -16,6 +17,7 @@ const cssEditor = CodeMirror(document.getElementById('css-editor'), {
     tabSize: 2,
     indentUnit: 2,
     lineWrapping: true,
+    extraKeys: { "Ctrl-Space": "autocomplete" }
 });
 const jsEditor = CodeMirror(document.getElementById('js-editor'), {
     mode: 'javascript',
@@ -25,24 +27,63 @@ const jsEditor = CodeMirror(document.getElementById('js-editor'), {
     tabSize: 2,
     indentUnit: 2,
     lineWrapping: true,
+    extraKeys: { "Ctrl-Space": "autocomplete" }
 });
 
-// Sample code snippets
+// Sample code snippets with neat formatting and proper line breaks
 const samples = {
     sample1: {
-        html: `<div class="container"><h1>Hello World</h1><p>This is a simple HTML sample.</p></div>`,
-        css: `h1 { color: blue; }`,
-        js: `console.log('Hello from JS!');`
+        html: `
+<div class="container">
+    <h1>Hello World</h1>
+    <p>This is a simple HTML sample.</p>
+</div>
+`,
+        css: `
+h1 {
+    color: blue;
+}
+`,
+        js: `
+console.log('Hello from JS!');
+`
     },
     sample2: {
-        html: `<div><h2>Interactive Page</h2><button onclick="changeColor()">Change Color</button></div>`,
-        css: `button { padding: 10px; background-color: red; color: white; }`,
-        js: `function changeColor() { document.body.style.backgroundColor = 'lightblue'; }`
+        html: `
+<div>
+    <h2>Interactive Page</h2>
+    <button onclick="changeColor()">Change Color</button>
+</div>
+`,
+        css: `
+button {
+    padding: 10px;
+    background-color: red;
+    color: white;
+}
+`,
+        js: `
+function changeColor() {
+    document.body.style.backgroundColor = 'lightblue';
+}
+`
     },
     sample3: {
-        html: `<div><h2>Sample 3</h2><p>Custom design with JS interaction</p></div>`,
-        css: `p { color: green; font-size: 20px; }`,
-        js: `document.querySelector('h2').innerText = 'Updated with JS';`
+        html: `
+<div>
+    <h2>Sample 3</h2>
+    <p>Custom design with JS interaction</p>
+</div>
+`,
+        css: `
+p {
+    color: green;
+    font-size: 20px;
+}
+`,
+        js: `
+document.querySelector('h2').innerText = 'Updated with JS';
+`
     }
 };
 
@@ -53,13 +94,13 @@ document.getElementById('sample-selector').addEventListener('change', (event) =>
 
     // Alert user and load code into editors
     alert("Loading HTML code into the HTML editor...");
-    htmlEditor.setValue(code.html);
+    htmlEditor.setValue(code.html.trim());
     
     alert("Loading CSS code into the CSS editor...");
-    cssEditor.setValue(code.css);
+    cssEditor.setValue(code.css.trim());
     
     alert("Loading JavaScript code into the JavaScript editor...");
-    jsEditor.setValue(code.js);
+    jsEditor.setValue(code.js.trim());
     
     // Update preview after code is loaded
     updatePreview();
