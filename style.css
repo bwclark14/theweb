@@ -45,11 +45,12 @@ body {
 
 .code-editor {
     display: none;
-    height: 300px;
+    flex: 1; /* Ensure it takes full available height */
 }
 
 .code-editor.active {
     display: block;
+    height: 100%; /* Ensure editor takes the full height of the container */
 }
 
 .sample-selector {
@@ -92,4 +93,18 @@ body {
 
 .popout-btn:hover {
     background-color: #0056b3;
+}
+
+/* Ensure the iframe (preview) is responsive */
+.preview iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Style for the editor (CodeMirror) content area */
+.CodeMirror {
+    border: 1px solid #ddd;  /* Add border for editor */
+    border-radius: 5px;
+    height: 100%; /* Full height for the editor */
 }
