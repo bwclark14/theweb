@@ -10,8 +10,19 @@
             font-family: Arial, sans-serif;
             margin: 0;
             display: flex;
+            flex-direction: column;
             height: 100vh;
             background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            flex: 1;
         }
         .sidebar {
             width: 150px;
@@ -47,6 +58,22 @@
             display: block;
             text-align: left;
             padding-left: 20px;
+        }
+        .editor-tabs {
+            display: flex;
+            border-bottom: 2px solid #ccc;
+        }
+        .editor-tabs div {
+            padding: 10px 20px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            background-color: #ddd;
+            transition: background-color 0.3s;
+        }
+        .editor-tabs div.active {
+            background-color: #4CAF50;
+            color: white;
         }
         .main {
             display: flex;
@@ -116,37 +143,48 @@
 </head>
 <body>
 
-    <div class="sidebar">
-        <h2>Editors</h2>
-        <div id="htmlTab" class="editor-label active" onclick="focusEditor('html')">HTML</div>
-        <div id="cssTab" class="editor-label" onclick="focusEditor('css')">CSS</div>
-        <div id="jsTab" class="editor-label" onclick="focusEditor('js')">JavaScript</div>
-        
-        <h2>Examples</h2>
-        <div class="example-label" onclick="loadExample('example1')">Simple Landing Page</div>
-        <div class="example-label" onclick="loadExample('example2')">Interactive Button</div>
-        <div class="example-label" onclick="loadExample('example3')">Basic Form</div>
+    <header>
+        <h1>Live HTML, CSS, JS Editor</h1>
+    </header>
 
-        <button id="downloadBtn">Download Code</button>
-    </div>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Editors</h2>
+            <div class="editor-tabs">
+                <div id="htmlTab" class="active" onclick="focusEditor('html')">HTML</div>
+                <div id="cssTab" onclick="focusEditor('css')">CSS</div>
+                <div id="jsTab" onclick="focusEditor('js')">JavaScript</div>
+            </div>
 
-    <div class="main">
-        <div class="editor-container">
-            <div id="htmlEditorContainer" class="code-editor focused">
-                <textarea id="htmlEditor" placeholder="Write your HTML here..."></textarea>
-            </div>
-            <div id="cssEditorContainer" class="code-editor">
-                <textarea id="cssEditor" placeholder="Write your CSS here..."></textarea>
-            </div>
-            <div id="jsEditorContainer" class="code-editor">
-                <textarea id="jsEditor" placeholder="Write your JavaScript here..."></textarea>
-            </div>
+            <h2>Examples</h2>
+            <select id="exampleSelect" onchange="loadExampleFromSelect()">
+                <option value="">Select a sample site</option>
+                <option value="example1">Simple Landing Page</option>
+                <option value="example2">Interactive Button</option>
+                <option value="example3">Basic Form</option>
+            </select>
+
+            <button id="downloadBtn">Download Code</button>
         </div>
-        <div class="preview-container">
-            <iframe id="preview" class="preview"></iframe>
-            <div id="previewControls">
-                <button id="openPreviewBtn" onclick="openPreviewWindow()">Open Preview in New Window</button>
-                <button id="minimizePreviewBtn" onclick="togglePreviewMinimize()">Minimize Preview</button>
+
+        <div class="main">
+            <div class="editor-container">
+                <div id="htmlEditorContainer" class="code-editor focused">
+                    <textarea id="htmlEditor" placeholder="Write your HTML here..."></textarea>
+                </div>
+                <div id="cssEditorContainer" class="code-editor">
+                    <textarea id="cssEditor" placeholder="Write your CSS here..."></textarea>
+                </div>
+                <div id="jsEditorContainer" class="code-editor">
+                    <textarea id="jsEditor" placeholder="Write your JavaScript here..."></textarea>
+                </div>
+            </div>
+            <div class="preview-container">
+                <iframe id="preview" class="preview"></iframe>
+                <div id="previewControls">
+                    <button id="openPreviewBtn" onclick="openPreviewWindow()">Open Preview in New Window</button>
+                    <button id="minimizePreviewBtn" onclick="togglePreviewMinimize()">Minimize Preview</button>
+                </div>
             </div>
         </div>
     </div>
@@ -182,7 +220,7 @@
 
         function focusEditor(type) {
             // Remove focus from all editors
-            document.querySelectorAll('.editor-label').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.editor-tabs div').forEach(tab => tab.classList.remove('active'));
             document.getElementById(`${type}Tab`).classList.add('active');
 
             // Hide all editor containers
@@ -212,78 +250,3 @@
                     <script>${js}<\/script>
                 </body>
                 </html>
-            `);
-            previewDoc.close();
-        }
-
-        const examples = {
-            example1: {
-                html: "<h1>Welcome to My Site</h1><p>This is a simple landing page.</p>",
-                css: "body { font-family: Arial, sans-serif; text-align: center; } h1 { color: #4CAF50; }",
-                js: "console.log('Welcome to the Simple Landing Page');"
-            },
-            example2: {
-                html: "<button onclick='clickMe()'>Click Me!</button>",
-                css: "button { padding: 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }",
-                js: "function clickMe() { alert('Button clicked!'); }"
-            },
-            example3: {
-                html: "<form><label for='name'>Name:</label><input type='text' id='name' name='name'><button type='submit'>Submit</button></form>",
-                css: "form { display: flex; flex-direction: column; width: 200px; margin: auto; } label, input, button { margin: 10px 0; }",
-                js: "document.querySelector('form').onsubmit = function() { alert('Form submitted!'); return false; };"
-            }
-        };
-
-        function loadExample(exampleKey) {
-            const example = examples[exampleKey];
-            htmlEditor.setValue(example.html);
-            cssEditor.setValue(example.css);
-            jsEditor.setValue(example.js);
-            updatePreview();
-        }
-
-        function openPreviewWindow() {
-            if (!previewWindow || previewWindow.closed) {
-                previewWindow = window.open('', 'Preview Window', 'width=800,height=600');
-                previewWindow.document.write('<html><head><title>Preview</title></head><body></body></html>');
-            }
-            updatePreview();
-        }
-
-        function togglePreviewMinimize() {
-            const previewContainer = document.querySelector('.preview-container');
-            const minimizeButton = document.getElementById('minimizePreviewBtn');
-
-            if (previewContainer.style.display === 'none') {
-                previewContainer.style.display = 'flex';
-                minimizeButton.innerHTML = 'Minimize Preview';
-            } else {
-                previewContainer.style.display = 'none';
-                minimizeButton.innerHTML = 'Restore Preview';
-            }
-        }
-
-        htmlEditor.on("change", updatePreview);
-        cssEditor.on("change", updatePreview);
-        jsEditor.on("change", updatePreview);
-
-        document.getElementById('downloadBtn').addEventListener('click', () => {
-            const zip = new JSZip();
-            zip.file("index.html", htmlEditor.getValue());
-            zip.file("style.css", cssEditor.getValue());
-            zip.file("script.js", jsEditor.getValue());
-
-            zip.generateAsync({ type: "blob" })
-                .then(content => {
-                    const a = document.createElement('a');
-                    a.href = URL.createObjectURL(content);
-                    a.download = 'project.zip';
-                    a.click();
-                });
-        });
-
-        // Initial focus on HTML editor
-        focusEditor('html');
-    </script>
-</body>
-</html>
