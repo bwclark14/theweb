@@ -12,13 +12,13 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // Initialize CodeMirror editor for HTML with syntax highlighting
 const htmlEditor = CodeMirror(document.getElementById('html-editor'), {
-    mode: 'html', // HTML mixed mode for combined HTML, CSS, and JS
-    theme: 'dracula',  // You can use any theme (e.g., 'dracula', 'monokai')
+    mode: 'htmlmixed',  // Use htmlmixed mode for syntax highlighting
+    theme: 'dracula',
     lineNumbers: true,
-    autoCloseTags: true,  // Automatically closes HTML tags
+    autoCloseTags: true,
     tabSize: 2,
     indentUnit: 2,
-    lineWrapping: true,  // Wrap lines if they are too long
+    lineWrapping: true,
     extraKeys: { "Ctrl-Space": "autocomplete" }
 });
 
