@@ -1,3 +1,15 @@
+// Set the default sample code to load on page load (Sample 1)
+window.addEventListener('DOMContentLoaded', () => {
+    const defaultSample = 'sample1';
+    const code = samples[defaultSample];
+
+    htmlEditor.setValue(code.html.trim());
+    cssEditor.setValue(code.css.trim());
+    jsEditor.setValue(code.js.trim());
+
+    updatePreview();  // Update the preview after loading code
+});
+
 // Initialize CodeMirror editor for HTML with syntax highlighting
 const htmlEditor = CodeMirror(document.getElementById('html-editor'), {
     mode: 'html', // HTML mixed mode for combined HTML, CSS, and JS
