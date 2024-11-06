@@ -195,8 +195,8 @@
             cssEditor.setValue(example.css);
             jsEditor.setValue(example.js);
 
-            // Update the preview based on the loaded example
-            updatePreview();
+            // Show current editor and refresh preview
+            showEditor(currentEditor);
         }
 
         htmlEditor.on("change", updatePreview);
