@@ -1,4 +1,4 @@
-/* Body and Layout */
+/* Ensure full page layout is correct */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -121,11 +121,23 @@ header select {
     width: 100%;
 }
 
+/* Set the gutter width and ensure it is left-aligned */
 .CodeMirror-gutter {
-    width: 40px; /* Give enough width for the line numbers */
+    width: 40px;  /* Adequate width for line numbers */
+    text-align: left; /* Ensure the line numbers are left-aligned */
 }
 
-/* Adjust CodeMirror editor size to avoid overlap */
+/* Ensure content doesn't overlap with gutter */
 .CodeMirror-lines {
-    padding-left: 40px; /* This ensures code doesn't overlap the line numbers */
+    padding-left: 40px; /* Match the gutter width */
+}
+
+/* Optional: Add a background color for line numbers for contrast */
+.CodeMirror-gutter-background {
+    background-color: #f4f4f4;
+}
+
+/* Optional: Add a highlight to the active line number */
+.CodeMirror-linenumber-active {
+    background-color: #f1f1f1;
 }
