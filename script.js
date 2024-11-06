@@ -94,11 +94,16 @@ document.getElementById('sample-selector').addEventListener('change', (event) =>
     const sample = event.target.value;
     const code = samples[sample];
 
-    // Load code into editors
+    // Alert user and load code into editors
+    alert("Loading HTML code into the HTML editor...");
     htmlEditor.setValue(code.html.trim());
+    
+    alert("Loading CSS code into the CSS editor...");
     cssEditor.setValue(code.css.trim());
+    
+    alert("Loading JavaScript code into the JavaScript editor...");
     jsEditor.setValue(code.js.trim());
-
+    
     // Update the preview after loading the code
     updatePreview();
 });
@@ -156,4 +161,23 @@ document.addEventListener('mousemove', (e) => {
 document.addEventListener('mouseup', () => {
     isResizing = false;
     document.body.style.cursor = 'default';
+});
+
+// Popout button functionality
+document.getElementById('popoutBtn').addEventListener('click', () => {
+    // Open a new window with fullscreen size
+    const newWindow = window.open('', '', 'width=' + screen.width + ',height=' + screen.height + ',top=0,left=0,scrollbars=no,status=no,toolbar=no,location=no,menubar=no');
+
+    // Write the preview iframe content to the new window
+    const previewFrame = document.getElementById('preview');
+    newWindow.document.write('<html><head><title>Live Preview</title></head><body style="margin:0; padding:0; overflow:hidden;">' + previewFrame.outerHTML + '</body></html>');
+    newWindow.document.close();
+
+    // Optional: Add CSS to make the iframe fill the new window
+    newWindow.onload = () => {
+        const iframe = newWindow.document.querySelector('iframe');
+        iframe.style.width = '100%';
+        iframe.style.height = '100vh';
+        iframe.style.border = 'none';
+    };
 });
