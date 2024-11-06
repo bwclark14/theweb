@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live HTML, CSS, JS Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .editor {
+            width: 30%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            height: 400px;
+            font-family: monospace;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+        .preview {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+        }
+        #downloadBtn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #downloadBtn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Live HTML, CSS, and JavaScript Editor</h1>
+    <div class="container">
+        <textarea id="htmlEditor" class="editor" placeholder="Write your HTML here..."></textarea>
+        <textarea id="cssEditor" class="editor" placeholder="Write your CSS here..."></textarea>
+        <textarea id="jsEditor" class="editor" placeholder="Write your JavaScript here..."></textarea>
+    </div>
+
+    <iframe id="preview" class="preview"></iframe>
+
+    <button id="downloadBtn">Download Code</button>
+
+    <script>
+        const htmlEditor = document.getElementById("htmlEditor");
+        const cssEditor = document.getElementById("cssEditor");
+        const jsEditor = document.getElementById("jsEditor");
+        const preview = document.getElementById("preview");
+
+        // Function to update the preview
+        function updatePreview() {
+            const html = htmlEditor.value;
+            const css = `<style>${cssEditor.value}</style>`;
+            const js = `<script>${jsEditor.value}</script>`;
+
+            preview.srcdoc = html + css + js;
+        }
+
+        // Event listeners for each editor to update preview dynamically
+        htmlEditor.addEventListener("input", updatePreview);
+        cssEditor.addEventListener("input", updatePreview);
+        jsEditor.addEventListener("input", updatePreview);
+
+        // Download function to save all code as a zip
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            const htmlCode = htmlEditor.value;
+            const cssCode = cssEditor.value;
+            const jsCode = jsEditor.value;
+
+            // Create a zip file with HTML, CSS, and JS
+            const zip = new JSZip();
+            zip.file("index.html", htmlCode);
+            zip.file("style.css", cssCode);
+            zip.file("script.js", jsCode);
+
+            zip.generateAsync({ type: "blob" })
+                .then(function (content) {
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(content);
+                    a.download = 'project.zip';
+                    a.click();
+                });
+        });
+
+        // Initial call to set up the preview
+        updatePreview();
+
+    </script>
+
+    <!-- JSZip library for creating zip files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+</body>
+</html>
