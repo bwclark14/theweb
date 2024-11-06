@@ -27,15 +27,16 @@
             color: #f4f4f4;
             margin-bottom: 15px;
         }
-        .editor-label {
-            padding: 15px;
+        .editor-label, .example-label {
+            padding: 10px 15px;
             cursor: pointer;
             width: 100%;
             text-align: center;
             background-color: #444;
             margin: 5px 0;
+            font-size: 0.9em;
         }
-        .editor-label:hover,
+        .editor-label:hover, .example-label:hover,
         .editor-label.active {
             background-color: #4CAF50;
         }
@@ -83,6 +84,12 @@
         <div class="editor-label active" onclick="showEditor('html')">HTML</div>
         <div class="editor-label" onclick="showEditor('css')">CSS</div>
         <div class="editor-label" onclick="showEditor('js')">JavaScript</div>
+        
+        <h2>Examples</h2>
+        <div class="example-label" onclick="loadExample('example1')">Simple Landing Page</div>
+        <div class="example-label" onclick="loadExample('example2')">Interactive Button</div>
+        <div class="example-label" onclick="loadExample('example3')">Basic Form</div>
+
         <button id="downloadBtn">Download Code</button>
     </div>
 
@@ -106,7 +113,6 @@
     <script>
         let currentEditor = 'html';
 
-        // Initialize CodeMirror instances for each editor
         const htmlEditor = CodeMirror.fromTextArea(document.getElementById("htmlEditor"), {
             mode: "xml",
             theme: "default",
@@ -127,7 +133,6 @@
             lineWrapping: true
         });
 
-        // Show the selected editor and hide others
         function showEditor(type) {
             currentEditor = type;
             document.querySelectorAll(".editor-label").forEach(label => label.classList.remove("active"));
@@ -140,7 +145,6 @@
             updatePreview();
         }
 
-        // Function to update the preview
         function updatePreview() {
             const html = htmlEditor.getValue();
             const css = cssEditor.getValue();
@@ -165,12 +169,37 @@
             previewDoc.close();
         }
 
-        // Update preview on each editor's content change
+        // Code examples
+        const examples = {
+            example1: {
+                html: "<h1>Welcome to My Site</h1><p>This is a simple landing page.</p>",
+                css: "body { font-family: Arial, sans-serif; text-align: center; } h1 { color: #4CAF50; }",
+                js: "console.log('Welcome to the Simple Landing Page');"
+            },
+            example2: {
+                html: "<button onclick='clickMe()'>Click Me!</button>",
+                css: "button { padding: 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }",
+                js: "function clickMe() { alert('Button clicked!'); }"
+            },
+            example3: {
+                html: "<form><label for='name'>Name:</label><input type='text' id='name' name='name'><button type='submit'>Submit</button></form>",
+                css: "form { display: flex; flex-direction: column; width: 200px; margin: auto; } label, input, button { margin: 10px 0; }",
+                js: "document.querySelector('form').onsubmit = function() { alert('Form submitted!'); return false; };"
+            }
+        };
+
+        function loadExample(exampleKey) {
+            const example = examples[exampleKey];
+            htmlEditor.setValue(example.html);
+            cssEditor.setValue(example.css);
+            jsEditor.setValue(example.js);
+            updatePreview();
+        }
+
         htmlEditor.on("change", updatePreview);
         cssEditor.on("change", updatePreview);
         jsEditor.on("change", updatePreview);
 
-        // Download function to save all code as a zip
         document.getElementById('downloadBtn').addEventListener('click', () => {
             const zip = new JSZip();
             zip.file("index.html", htmlEditor.getValue());
@@ -186,7 +215,6 @@
                 });
         });
 
-        // Initialize with the HTML editor open and preview updated
         updatePreview();
         showEditor('html');
     </script>
