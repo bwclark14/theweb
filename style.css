@@ -149,9 +149,11 @@ header select {
 
   .editor-container {
     width: 100%; /* Make editors 100% wide */
+      height:50%;
   }
 
   .preview-container {
     width: 100%; /* Make preview 100% wide */
+      height:50%;
   }
 }
