@@ -1,3 +1,20 @@
+// Tab switching logic
+const tabButtons = document.querySelectorAll(".tab-button");
+const codeEditors = document.querySelectorAll(".code-editor");
+
+tabButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    // Remove 'active' class from all buttons and editors
+    tabButtons.forEach(btn => btn.classList.remove("active"));
+    codeEditors.forEach(editor => editor.classList.remove("active"));
+
+    // Add 'active' class to the clicked button and the corresponding editor
+    button.classList.add("active");
+    document.getElementById(button.getAttribute("data-tab") + "-editor").classList.add("active");
+  });
+});
+
+
 // Initialize Ace editor for HTML
 const htmlEditor = ace.edit("html-editor");
 htmlEditor.setTheme("ace/theme/dracula");
