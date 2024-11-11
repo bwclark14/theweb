@@ -108,7 +108,6 @@ const resetButton = document.getElementById("reset-button");
 const factText = document.getElementById("fact-text");
 const factImage = document.getElementById("fact-image");
 
-// Original facts array to reset
 const originalFacts = [
   {
     text: "The first computer virus was created in 1982.",
@@ -124,34 +123,34 @@ const originalFacts = [
   }
 ];
 
-// Set initial fact
 let currentFactIndex = 0;
 factText.innerText = originalFacts[currentFactIndex].text;
 factImage.src = originalFacts[currentFactIndex].image;
 
-// Event listener for Fact button
 factButton.addEventListener("click", () => {
   currentFactIndex = (currentFactIndex + 1) % originalFacts.length;
   factText.innerText = originalFacts[currentFactIndex].text;
   factImage.src = originalFacts[currentFactIndex].image;
 });
 
-// Event listener for Reset button
 resetButton.addEventListener("click", () => {
   currentFactIndex = 0;
   factText.innerText = originalFacts[currentFactIndex].text;
   factImage.src = originalFacts[currentFactIndex].image;
 });
-`);
-jsEditor.setOptions({
-    fontSize: "14px",
-    showPrintMargin: false,
-    wrap: true,
-    showLineNumbers: true,
-    tabSize: 2
+
+const tabButtons = document.querySelectorAll(".tab-button");
+const codeEditors = document.querySelectorAll(".code-editor");
+
+tabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+        tabButtons.forEach(btn => btn.classList.remove("active"));
+        codeEditors.forEach(editor => editor.classList.remove("active"));
+        button.classList.add("active");
+        document.getElementById(button.getAttribute("data-tab") + "-editor").classList.add("active");
+    });
 });
 
-// Function to update the preview iframe dynamically based on editor content
 function updatePreview() {
     const html = htmlEditor.getValue();
     const css = cssEditor.getValue();
@@ -168,65 +167,17 @@ function updatePreview() {
             </head>
             <body>
                 ${html}
-                <script>${js}</script>
+                <script>${js}<\/script>
             </body>
         </html>
     `);
     iframeDocument.close();
 }
 
-// Initialize the preview with the default content
-updatePreview();
+htmlEditor.session.on('change', updatePreview);
+cssEditor.session.on('change', updatePreview);
+jsEditor.session.on('change', updatePreview);
 
-// Event listeners for file upload, popout, and download
-document.getElementById('uploadBtn').addEventListener('change', handleFileUpload);
-document.getElementById('popoutBtn').addEventListener('click', popoutPreview);
-document.getElementById('downloadBtn').addEventListener('click', downloadCode);
-
-// File upload handler
-function handleFileUpload(event) {
-    const file = event.target.files[0];
-    if (file && file.type === 'text/html') {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const htmlContent = e.target.result;
-            htmlEditor.setValue(htmlContent);
-            updatePreview();
-        };
-        reader.readAsText(file);
-    }
-}
-
-// Popout preview in a new window
-function popoutPreview() {
-    const previewWindow = window.open('', 'Preview', 'width=800,height=600');
-    previewWindow.document.write('<html><head><title>Preview</title></head><body></body></html>');
-    const iframe = previewWindow.document.createElement('iframe');
-    iframe.style.width = '100%';
-    iframe.style.height = '100%';
-    previewWindow.document.body.appendChild(iframe);
-
-    const html = htmlEditor.getValue();
-    const css = cssEditor.getValue();
-    const js = jsEditor.getValue();
-
-    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-    iframeDocument.open();
-    iframeDocument.write(`
-        <html>
-            <head>
-                <style>${css}</style>
-            </head>
-            <body>
-                ${html}
-                <script>${js}</script>
-            </body>
-        </html>
-    `);
-    iframeDocument.close();
-}
-
-// Download code as a ZIP
 function downloadCode() {
     const html = htmlEditor.getValue();
     const css = cssEditor.getValue();
@@ -244,3 +195,36 @@ function downloadCode() {
         link.click();
     });
 }
+
+document.getElementById('downloadBtn').addEventListener('click', downloadCode);
+
+function popoutPreview() {
+    const previewWindow = window.open('', 'Preview', 'width=800,height=600');
+    const iframe = document.createElement("iframe");
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    previewWindow.document.body.appendChild(iframe);
+
+    const html = htmlEditor.getValue();
+    const css = cssEditor.getValue();
+    const js = jsEditor.getValue();
+
+    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+    iframeDocument.open();
+    iframeDocument.write(`
+        <html>
+            <head>
+                <style>${css}</style>
+            </head>
+            <body>
+                ${html}
+                <script>${js}<\/script>
+            </body>
+        </html>
+    `);
+    iframeDocument.close();
+}
+
+document.getElementById('popoutBtn').addEventListener('click', popoutPreview);
+
+window.addEventListener('load', updatePreview);
