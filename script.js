@@ -219,7 +219,7 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Live Code Editor - Downloaded</title>
+            <title>Computing Facts Site</title>
             <style>${cssContent}</style>
         </head>
         <body>
@@ -236,7 +236,7 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
     // Create a temporary download link
     const a = document.createElement("a");
     a.href = url;
-    a.download = "live_code_editor.html";
+    a.download = "computingfactssite.html"; // Name of the downloaded file
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -248,7 +248,7 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
 // File Upload Button
 document.getElementById("uploadBtn").addEventListener("change", (event) => {
     const file = event.target.files[0];
-    if (file && file.type === "text/html") {
+    if (file && file.name === "computingfactssite.html" && file.type === "text/html") {
         const reader = new FileReader();
         reader.onload = (e) => {
             const content = e.target.result;
@@ -274,9 +274,10 @@ document.getElementById("uploadBtn").addEventListener("change", (event) => {
         };
         reader.readAsText(file);
     } else {
-        alert("Please upload a valid HTML file.");
+        alert("Please upload a valid 'computingfactssite.html' file.");
     }
 });
+
 
 // Save content to Local Storage
 function saveContentToLocalStorage() {
