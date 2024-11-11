@@ -2,7 +2,12 @@
 const htmlEditor = ace.edit("html-editor");
 htmlEditor.setTheme("ace/theme/dracula");
 htmlEditor.session.setMode("ace/mode/html");
-htmlEditor.setValue("<div class='container'>\n  <h1>Hello World</h1>\n  <p>This is a simple HTML sample.</p>\n</div>");
+htmlEditor.setValue(`
+<div class="container">
+    <h1>Hello World</h1>
+    <p>This is a simple HTML sample.</p>
+</div>
+`);
 htmlEditor.setOptions({
     fontSize: "14px",
     showPrintMargin: false,
@@ -15,7 +20,11 @@ htmlEditor.setOptions({
 const cssEditor = ace.edit("css-editor");
 cssEditor.setTheme("ace/theme/dracula");
 cssEditor.session.setMode("ace/mode/css");
-cssEditor.setValue("h1 {\n    color: blue;\n}");
+cssEditor.setValue(`
+h1 {
+    color: blue;
+}
+`);
 cssEditor.setOptions({
     fontSize: "14px",
     showPrintMargin: false,
@@ -28,7 +37,9 @@ cssEditor.setOptions({
 const jsEditor = ace.edit("js-editor");
 jsEditor.setTheme("ace/theme/dracula");
 jsEditor.session.setMode("ace/mode/javascript");
-jsEditor.setValue("console.log('Hello from JS!');");
+jsEditor.setValue(`
+console.log('Hello from JS!');
+`);
 jsEditor.setOptions({
     fontSize: "14px",
     showPrintMargin: false,
@@ -37,87 +48,11 @@ jsEditor.setOptions({
     tabSize: 2
 });
 
-// Sample code snippets with neat formatting and proper line breaks
-const samples = {
-    sample1: {
-        html: `
-<div class="container">
-    <h1>Hello World</h1>
-    <p>This is a simple HTML sample.</p>
-</div>
-`,
-        css: `
-h1 {
-    color: blue;
-}
-`,
-        js: `
-console.log('Hello from JS!');
-`
-    },
-    sample2: {
-        html: `
-<div>
-    <h2>Interactive Page</h2>
-    <button onclick="changeColor()">Change Color</button>
-</div>
-`,
-        css: `
-button {
-    padding: 10px;
-    background-color: red;
-    color: white;
-}
-`,
-        js: `
-function changeColor() {
-    document.body.style.backgroundColor = 'lightblue';
-}
-`
-    },
-    sample3: {
-        html: `
-<div>
-    <h2>Sample 3</h2>
-    <p>Custom design with JS interaction</p>
-</div>
-`,
-        css: `
-p {
-    color: green;
-    font-size: 20px;
-}
-`,
-        js: `
-document.querySelector('h2').innerText = 'Updated with JS';
-`
-    }
-};
-
-// Load the selected sample
-document.getElementById('sample-selector').addEventListener('change', (event) => {
-    const sample = event.target.value;
-    const code = samples[sample];
-
-    // Alert user and load code into editors
-    alert("Loading HTML code into the HTML editor...");
-    htmlEditor.setValue(code.html.trim());  // Load HTML code into the editor
-    
-    alert("Loading CSS code into the CSS editor...");
-    cssEditor.setValue(code.css.trim());  // Load CSS code into the editor
-    
-    alert("Loading JavaScript code into the JavaScript editor...");
-    jsEditor.setValue(code.js.trim());  // Load JS code into the editor
-    
-    // Update the preview after loading the code
-    updatePreview();
-});
-
 // Function to update preview
 function updatePreview() {
     const htmlContent = htmlEditor.getValue();
     const cssContent = `<style>${cssEditor.getValue()}</style>`;
-    const jsContent = `<script>${jsEditor.getValue()}</script>`;
+    const jsContent = `<script>${jsEditor.getValue()}<\/script>`;
     const fullContent = htmlContent + cssContent + jsContent;
 
     const previewFrame = document.getElementById('preview');
