@@ -4,59 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Code Editor</title>
-
-    <!-- Include Ace Stylesheet -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.css" rel="stylesheet" />
-
-    <!-- Include Ace Script -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
-
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Header -->
+    <header>
+        <h1>Live Code Editor</h1>
+    </header>
 
-<!-- Banner Header -->
-<header class="header">
-    <h1>Live Code Editor</h1>
-    <label for="sample-selector">Choose a Sample Site:</label>
-    <select id="sample-selector">
-        <option value="sample1">Sample 1</option>
-        <option value="sample2">Sample 2</option>
-        <option value="sample3">Sample 3</option>
-    </select>
-</header>
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Editor Container -->
+        <div class="editor-container">
+            <!-- Tabs for switching between HTML, CSS, and JavaScript -->
+            <div class="tabs">
+                <button class="tab-button active" data-tab="html">HTML</button>
+                <button class="tab-button" data-tab="css">CSS</button>
+                <button class="tab-button" data-tab="js">JavaScript</button>
+            </div>
 
-<div class="container">
+            <!-- HTML Editor -->
+            <div id="html-editor" class="code-editor active"></div>
 
-    <!-- Editor Section (Tabs and Code Editors) -->
-    <div class="editor-container">
-        <div class="tabs">
-            <button class="tab-button active" data-tab="html">HTML</button>
-            <button class="tab-button" data-tab="css">CSS</button>
-            <button class="tab-button" data-tab="js">JavaScript</button>
+            <!-- CSS Editor -->
+            <div id="css-editor" class="code-editor"></div>
+
+            <!-- JavaScript Editor -->
+            <div id="js-editor" class="code-editor"></div>
         </div>
 
-        <!-- HTML, CSS, JS Code Editors -->
-        <div id="html-editor" class="code-editor active"></div>
-        <div id="css-editor" class="code-editor"></div>
-        <div id="js-editor" class="code-editor"></div>
-
-        <!-- Popout Button -->
-        <button id="popoutBtn">Popout Preview</button>
+        <!-- Preview Container -->
+        <div class="preview-container">
+            <div class="preview-header">
+                <button id="popoutBtn" class="popout-btn">Popout Preview</button>
+            </div>
+            <iframe id="preview" class="preview"></iframe>
+        </div>
     </div>
 
-    <!-- Resize Handle -->
-    <div class="resize-handle"></div>
-
-    <!-- Preview Section -->
-    <div class="preview-container">
-        <iframe id="preview"></iframe>
-    </div>
-
-</div>
-
-<!-- External JavaScript -->
-<script src="script.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
