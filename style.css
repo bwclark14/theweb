@@ -142,3 +142,18 @@ header select {
 .CodeMirror-linenumber-active {
     background-color: #f1f1f1;
 }
+@media screen and (max-width: 900px) and (min-width: 600px) and (orientation: portrait) {
+  .split-container {
+    flex-direction: column; /* Stack the code editors on top and preview on bottom */
+  }
+
+  .editor-container {
+    height: 50%; /* Adjust heights as needed */
+    width: 100%;
+  }
+
+  .preview-container {
+    height: 50%; /* Adjust heights as needed */
+    width: 100%;
+  }
+}
