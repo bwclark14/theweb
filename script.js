@@ -3,10 +3,19 @@ const htmlEditor = ace.edit("html-editor");
 htmlEditor.setTheme("ace/theme/dracula");
 htmlEditor.session.setMode("ace/mode/html");
 htmlEditor.setValue(`
-<div class="container">
-    <h1>Hello World</h1>
-    <p>This is a simple HTML sample.</p>
-</div>
+<body>
+  <div class="container">  
+    <h1 id="fact-title">This is a website</h1>
+    <p> By Me</p>  
+    <p id="fact-text"></p>
+    <img id="fact-image" src="https://tinyurl.com/csfact101"> 
+    <div id="button-container">
+      <button id="fact-button">Fact</button>
+      <button id="reset-button">Reset</button>
+    </div>  
+    <p>something can go here</p>
+  </div>
+</body>
 `);
 htmlEditor.setOptions({
     fontSize: "14px",
@@ -21,8 +30,64 @@ const cssEditor = ace.edit("css-editor");
 cssEditor.setTheme("ace/theme/dracula");
 cssEditor.session.setMode("ace/mode/css");
 cssEditor.setValue(`
-h1 {
-    color: blue;
+body {
+  background-color: purple;
+}
+
+.container {
+  text-align: center;
+  margin: 30px;
+  background-color: white;
+  border-radius: 0px;
+  border: dotted;
+  border-color: purple;
+  border-width: 3px;
+}
+
+#fact-title {
+  font-size: 16px;
+  font-weight: bold;
+  font-family: Arial;
+  color: red;
+}
+
+#fact-text {
+  font-family: Arial;
+  font-size: 16pt;
+  margin-bottom: 20px;
+}
+
+#fact-image {
+  max-width: 300px;
+  height: auto;
+  border-radius: 0px;
+  border: solid;
+  border-width: 1px;
+  border-style: solid;
+}
+
+#fact-button {
+  cursor: pointer;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: green;
+  color: white;
+  border: none;
+  border-radius: 0px;
+  box-shadow: 5px 5px lightblue;
+  margin: 10px;
+}
+
+#reset-button {
+  cursor: pointer;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: darkblue;
+  color: white;
+  border: none;
+  border-radius: 0px;
+  box-shadow: 5px 5px lightblue;
+  margin: 10px;
 }
 `);
 cssEditor.setOptions({
@@ -38,7 +103,65 @@ const jsEditor = ace.edit("js-editor");
 jsEditor.setTheme("ace/theme/dracula");
 jsEditor.session.setMode("ace/mode/javascript");
 jsEditor.setValue(`
-console.log('Hello from JS!');
+const factButton = document.getElementById("fact-button");
+const resetButton = document.getElementById("reset-button");
+const factText = document.getElementById("fact-text");
+const factImage = document.getElementById("fact-image");
+
+// Original facts array to reset
+const originalFacts = [
+  {
+    text: "The first computer virus was created in 1982.",
+    image: "https://tse4.mm.bing.net/th/id/OIP.A841fIv6sL9hMwLaLGuQDAHaDt?w=310&h=175&c=7&r=0&o=5&dpr=1.4&pid=1.7"
+  },
+  {
+    text: "The number of emails sent and received per day in 2024 is 361.6 billion.",
+    image: "https://cdn.shopify.com/s/files/1/0840/8370/3830/articles/1701784225-number-of-emails-sent-and-received-per-day-2023-2027.png?v=1714654437"
+  },
+  {
+    text: "The internet was originally developed for military use.",
+    image: "https://tse4.mm.bing.net/th/id/OIP.m5as9dHqt3CrZQGua_EZWgHaD2?w=318&h=180&c=7&r=0&o=5&dpr=1.4&pid=1.7"
+  },
+  {
+    text: "The first computer game was called Spacewar! and was created in 1962.",
+    image: "https://tse1.mm.bing.net/th/id/OIP.AZJ3rV7_IN1PUdAuPYUazAHaEK?w=1280&h=720&rs=1&pid=ImgDetMain"
+  },
+  {
+    text: "The first programmable and digital computer, ENIAC (Electronic Numerical Integrator and Computer), was developed in 1945",
+    image: "https://th.bing.com/th/id/R.39f00ad246b0328b29ae9ed6de30afcf?rik=BtVkVuZJj47oqw&pid=ImgRaw&r=0"
+  }
+];
+
+// Clone original facts to a new array for manipulation
+let facts = [...originalFacts];
+
+// Default image to restore when reset is pressed
+const defaultImageUrl = "https://tinyurl.com/csfact101";
+
+function getRandomFact() {
+  if (facts.length === 0) {
+    factText.textContent = "All facts have been shown!";
+    factImage.src = ""; // Optionally clear the image when no facts are left
+    factButton.disabled = true; // Disable the button when out of facts
+    return;
+  }
+
+  const randomIndex = Math.floor(Math.random() * facts.length);
+  const randomFact = facts.splice(randomIndex, 1)[0]; // Remove the fact from the array
+  factText.textContent = randomFact.text;
+  factImage.src = randomFact.image;
+}
+
+function resetFacts() {
+  facts = [...originalFacts]; // Reset facts array to original
+  factText.textContent = ""; // Clear fact text
+  factImage.src = defaultImageUrl; // Restore default image
+  factButton.disabled = false; // Re-enable the Show Fact button
+}
+
+// Event listeners
+factButton.addEventListener("click", getRandomFact);
+resetButton.addEventListener("click", resetFacts);
 `);
 jsEditor.setOptions({
     fontSize: "14px",
@@ -52,7 +175,7 @@ jsEditor.setOptions({
 function updatePreview() {
     const htmlContent = htmlEditor.getValue();
     const cssContent = `<style>${cssEditor.getValue()}</style>`;
-    const jsContent = `<script>${jsEditor.getValue()}<\/script>`;
+    const jsContent = `<script>${jsEditor.getValue()}</script>`;
     const fullContent = htmlContent + cssContent + jsContent;
 
     const previewFrame = document.getElementById('preview');
@@ -66,58 +189,3 @@ updatePreview();
 htmlEditor.session.on('change', updatePreview);
 cssEditor.session.on('change', updatePreview);
 jsEditor.session.on('change', updatePreview);
-
-// Tab switching functionality
-document.querySelectorAll('.tab-button').forEach(button => {
-    button.addEventListener('click', (event) => {
-        const tab = event.target.dataset.tab;
-
-        // Remove active class from all buttons
-        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-
-        // Show the corresponding editor
-        document.querySelectorAll('.code-editor').forEach(editor => editor.classList.remove('active'));
-        document.getElementById(`${tab}-editor`).classList.add('active');
-    });
-});
-
-// Resize functionality for preview pane
-let isResizing = false;
-
-document.querySelector('.resize-handle').addEventListener('mousedown', (e) => {
-    isResizing = true;
-    document.body.style.cursor = 'ew-resize';
-});
-
-document.addEventListener('mousemove', (e) => {
-    if (isResizing) {
-        const newWidth = e.clientX;
-        document.querySelector('.editor-container').style.width = `${newWidth}px`;
-        document.querySelector('.preview-container').style.width = `calc(100% - ${newWidth}px)`;
-    }
-});
-
-document.addEventListener('mouseup', () => {
-    isResizing = false;
-    document.body.style.cursor = 'default';
-});
-
-// Popout button functionality
-document.getElementById('popoutBtn').addEventListener('click', () => {
-    // Open a new window with fullscreen size
-    const newWindow = window.open('', '', 'width=' + screen.width + ',height=' + screen.height + ',top=0,left=0,scrollbars=no,status=no,toolbar=no');
-
-    // Write the preview iframe content to the new window
-    const previewFrame = document.getElementById('preview');
-    newWindow.document.write('<html><head><title>Live Preview</title></head><body style="margin:0; padding:0; overflow:hidden;">' + previewFrame.outerHTML + '</body></html>');
-    newWindow.document.close();
-
-    // Optional: Add CSS to make the iframe fill the new window
-    newWindow.onload = () => {
-        const iframe = newWindow.document.querySelector('iframe');
-        iframe.style.width = '100%';
-        iframe.style.height = '100vh';
-        iframe.style.border = 'none';
-    };
-});
