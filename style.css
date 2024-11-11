@@ -148,12 +148,12 @@ header select {
   }
 
   .editor-container {
-    height: 50%; /* Adjust heights as needed */
+   // height: 50%; /* Adjust heights as needed */
     width: 100%;
   }
 
   .preview-container {
-    height: 50%; /* Adjust heights as needed */
+   // height: 50%; /* Adjust heights as needed */
     width: 100%;
   }
 }
