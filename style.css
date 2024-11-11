@@ -147,17 +147,11 @@ header select {
     flex-direction: column; /* Stack the code editors on top and preview on bottom */
   }
 
-.editor-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    border-right: 2px solid #ccc;
-    padding: 10px;
-}
+  .editor-container {
+    width: 100%; /* Make editors 100% wide */
+  }
 
-.preview-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
+  .preview-container {
+    width: 100%; /* Make preview 100% wide */
+  }
 }
