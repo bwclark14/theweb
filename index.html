@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Code Editor</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script> <!-- Include JSZip for downloading files -->
 </head>
 <body>
     <!-- Header -->
@@ -39,18 +37,12 @@
         <div class="preview-container">
             <div class="preview-header">
                 <button id="popoutBtn" class="popout-btn">Popout Preview</button>
-                <button id="downloadBtn" class="download-btn">Download</button>
-                <input type="file" id="uploadBtn" class="upload-btn" accept=".html">
             </div>
-
-            <!-- Resize Handle -->
-            <div class="resize-handle" id="resizeHandle"></div>
-
-            <!-- Preview Iframe -->
             <iframe id="preview" class="preview"></iframe>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
