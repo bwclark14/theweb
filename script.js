@@ -16,8 +16,10 @@ tabButtons.forEach(button => {
 
 document.getElementById("downloadBtn").addEventListener("click", () => {
     const htmlContent = htmlEditor.getValue();
-    const cssContent = `<style>${cssEditor.getValue()}</style>`;
-    const jsContent = `<script>${jsEditor.getValue()}</script>`;
+    const cssContent = cssEditor.getValue();
+    const jsContent = jsEditor.getValue();
+
+    // Combine content into a complete HTML file
     const fullContent = `
         <!DOCTYPE html>
         <html lang="en">
@@ -25,28 +27,31 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Live Code Editor - Downloaded</title>
-            ${cssContent}
+            <style>${cssContent}</style>
         </head>
         <body>
             ${htmlContent}
-            ${jsContent}
+            <script>${jsContent}<\/script>
         </body>
         </html>
     `;
 
-    // Create a blob from the HTML content
+    // Create a Blob from the HTML content
     const blob = new Blob([fullContent], { type: "text/html" });
     const url = URL.createObjectURL(blob);
 
-    // Create a link to download the file
+    // Create a temporary download link
     const a = document.createElement("a");
     a.href = url;
     a.download = "live_code_editor.html";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url); // Free up memory
+
+    // Revoke the blob URL to free memory
+    URL.revokeObjectURL(url);
 });
+
 
 document.getElementById("uploadBtn").addEventListener("change", (event) => {
     const file = event.target.files[0];
