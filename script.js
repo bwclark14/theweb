@@ -1,6 +1,6 @@
 // Initialize Ace editor for HTML
 const htmlEditor = ace.edit("html-editor");
-htmlEditor.setTheme("ace/theme/dracula");
+htmlEditor.setTheme("ace/theme/twilight");
 htmlEditor.session.setMode("ace/mode/html");
 htmlEditor.setValue(`
 <body>
@@ -27,7 +27,7 @@ htmlEditor.setOptions({
 
 // Initialize Ace editor for CSS
 const cssEditor = ace.edit("css-editor");
-cssEditor.setTheme("ace/theme/dracula");
+cssEditor.setTheme("ace/theme/twilight");
 cssEditor.session.setMode("ace/mode/css");
 cssEditor.setValue(`
 body {
@@ -100,7 +100,7 @@ cssEditor.setOptions({
 
 // Initialize Ace editor for JavaScript
 const jsEditor = ace.edit("js-editor");
-jsEditor.setTheme("ace/theme/dracula");
+jsEditor.setTheme("ace/theme/twilight");
 jsEditor.session.setMode("ace/mode/javascript");
 jsEditor.setValue(`
 const factButton = document.getElementById("fact-button");
