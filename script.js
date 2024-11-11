@@ -248,7 +248,7 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
 // File Upload Button
 document.getElementById("uploadBtn").addEventListener("change", (event) => {
     const file = event.target.files[0];
-    if (file && file.name === "computingfactssite.html" && file.type === "text/html") {
+    if (file && file.type === "text/html") {
         const reader = new FileReader();
         reader.onload = (e) => {
             const content = e.target.result;
@@ -274,9 +274,10 @@ document.getElementById("uploadBtn").addEventListener("change", (event) => {
         };
         reader.readAsText(file);
     } else {
-        alert("Please upload a valid 'computingfactssite.html' file.");
+        alert("Please upload a valid HTML file.");
     }
 });
+
 
 
 // Save content to Local Storage
