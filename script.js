@@ -14,6 +14,28 @@ tabButtons.forEach(button => {
   });
 });
 
+document.getElementById("popoutBtn").addEventListener("click", () => {
+    const htmlContent = htmlEditor.getValue();
+    const cssContent = `<style>${cssEditor.getValue()}</style>`;
+    const jsContent = `<script>${jsEditor.getValue()}</script>`;
+    const fullContent = `
+        <html>
+        <head><meta charset="UTF-8"><title>Live Preview</title></head>
+        <body>${htmlContent}${cssContent}${jsContent}</body>
+        </html>
+    `;
+
+    // Create a new Blob containing the HTML content, set type to HTML
+    const previewBlob = new Blob([fullContent], { type: 'text/html' });
+    const previewUrl = URL.createObjectURL(previewBlob);
+
+    // Open new window with Blob URL
+    const popoutWindow = window.open(previewUrl, '_blank');
+    if (!popoutWindow) {
+        alert("Please allow pop-ups to open the preview.");
+    }
+});
+
 
 // Initialize Ace editor for HTML
 const htmlEditor = ace.edit("html-editor");
