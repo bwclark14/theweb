@@ -120,48 +120,28 @@ const originalFacts = [
   },
   {
     text: "The internet was originally developed for military use.",
-    image: "https://tse4.mm.bing.net/th/id/OIP.m5as9dHqt3CrZQGua_EZWgHaD2?w=318&h=180&c=7&r=0&o=5&dpr=1.4&pid=1.7"
-  },
-  {
-    text: "The first computer game was called Spacewar! and was created in 1962.",
-    image: "https://tse1.mm.bing.net/th/id/OIP.AZJ3rV7_IN1PUdAuPYUazAHaEK?w=1280&h=720&rs=1&pid=ImgDetMain"
-  },
-  {
-    text: "The first programmable and digital computer, ENIAC (Electronic Numerical Integrator and Computer), was developed in 1945",
-    image: "https://th.bing.com/th/id/R.39f00ad246b0328b29ae9ed6de30afcf?rik=BtVkVuZJj47oqw&pid=ImgRaw&r=0"
+    image: "https://tse4.mm.bing.net/th/id/OIP.m5as9dHqt-bfi7flxbBeWgHaD6?w=338&h=226&c=7&r=0&o=5&dpr=1.4&pid=1.7"
   }
 ];
 
-// Clone original facts to a new array for manipulation
-let facts = [...originalFacts];
+// Set initial fact
+let currentFactIndex = 0;
+factText.innerText = originalFacts[currentFactIndex].text;
+factImage.src = originalFacts[currentFactIndex].image;
 
-// Default image to restore when reset is pressed
-const defaultImageUrl = "https://tinyurl.com/csfact101";
+// Event listener for Fact button
+factButton.addEventListener("click", () => {
+  currentFactIndex = (currentFactIndex + 1) % originalFacts.length;
+  factText.innerText = originalFacts[currentFactIndex].text;
+  factImage.src = originalFacts[currentFactIndex].image;
+});
 
-function getRandomFact() {
-  if (facts.length === 0) {
-    factText.textContent = "All facts have been shown!";
-    factImage.src = ""; // Optionally clear the image when no facts are left
-    factButton.disabled = true; // Disable the button when out of facts
-    return;
-  }
-
-  const randomIndex = Math.floor(Math.random() * facts.length);
-  const randomFact = facts.splice(randomIndex, 1)[0]; // Remove the fact from the array
-  factText.textContent = randomFact.text;
-  factImage.src = randomFact.image;
-}
-
-function resetFacts() {
-  facts = [...originalFacts]; // Reset facts array to original
-  factText.textContent = ""; // Clear fact text
-  factImage.src = defaultImageUrl; // Restore default image
-  factButton.disabled = false; // Re-enable the Show Fact button
-}
-
-// Event listeners
-factButton.addEventListener("click", getRandomFact);
-resetButton.addEventListener("click", resetFacts);
+// Event listener for Reset button
+resetButton.addEventListener("click", () => {
+  currentFactIndex = 0;
+  factText.innerText = originalFacts[currentFactIndex].text;
+  factImage.src = originalFacts[currentFactIndex].image;
+});
 `);
 jsEditor.setOptions({
     fontSize: "14px",
@@ -171,178 +151,125 @@ jsEditor.setOptions({
     tabSize: 2
 });
 
-// Function to update preview
-function updatePreview() {
-    const htmlContent = htmlEditor.getValue();
-    const cssContent = `<style>${cssEditor.getValue()}</style>`;
-    const jsContent = `<script>${jsEditor.getValue()}</script>`;
-    const fullContent = htmlContent + cssContent + jsContent;
+// Resize Preview Window
+const resizeHandle = document.getElementById('resizeHandle');
+const previewContainer = document.querySelector('.preview-container');
+const editorContainer = document.querySelector('.editor-container');
+let isResizing = false;
+let lastDownX = 0;
 
-    const previewFrame = document.getElementById('preview');
-    previewFrame.srcdoc = fullContent; // Inject the code into the iframe
+// Add mouse events to handle resizing
+resizeHandle.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    lastDownX = e.clientX;
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', stopResizing);
+});
+
+function handleMouseMove(e) {
+    if (!isResizing) return;
+    const offset = e.clientX - lastDownX;
+    const newWidth = editorContainer.offsetWidth + offset;
+    editorContainer.style.width = `${newWidth}px`;
+    previewContainer.style.width = `calc(100% - ${newWidth}px)`;
+    lastDownX = e.clientX;
 }
 
-// Initial preview update
+function stopResizing() {
+    isResizing = false;
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', stopResizing);
+}
+
+// Optional: Update the preview dynamically when resizing the editor
+window.addEventListener('resize', updatePreview);
+
+// Function to update the preview iframe based on editor content
+function updatePreview() {
+    const html = htmlEditor.getValue();
+    const css = cssEditor.getValue();
+    const js = jsEditor.getValue();
+
+    const iframe = document.getElementById('preview');
+    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+
+    iframeDocument.open();
+    iframeDocument.write(`
+        <html>
+            <head>
+                <style>${css}</style>
+            </head>
+            <body>
+                ${html}
+                <script>${js}</script>
+            </body>
+        </html>
+    `);
+    iframeDocument.close();
+}
+
+// Initialize the preview with the default content
 updatePreview();
 
-// Listen for changes in the editors to update preview dynamically
-htmlEditor.session.on('change', updatePreview);
-cssEditor.session.on('change', updatePreview);
-jsEditor.session.on('change', updatePreview);
+// Event listeners for buttons to handle file upload and popout
+document.getElementById('uploadBtn').addEventListener('change', handleFileUpload);
+document.getElementById('popoutBtn').addEventListener('click', popoutPreview);
+document.getElementById('downloadBtn').addEventListener('click', downloadCode);
 
-// Tab switching logic
-const tabButtons = document.querySelectorAll(".tab-button");
-const codeEditors = document.querySelectorAll(".code-editor");
-
-tabButtons.forEach(button => {
-  button.addEventListener("click", () => {
-    // Remove 'active' class from all buttons and editors
-    tabButtons.forEach(btn => btn.classList.remove("active"));
-    codeEditors.forEach(editor => editor.classList.remove("active"));
-
-    // Add 'active' class to the clicked button and the corresponding editor
-    button.classList.add("active");
-    document.getElementById(button.getAttribute("data-tab") + "-editor").classList.add("active");
-  });
-});
-
-// Download Button
-document.getElementById("downloadBtn").addEventListener("click", () => {
-    const htmlContent = htmlEditor.getValue();
-    const cssContent = cssEditor.getValue();
-    const jsContent = jsEditor.getValue();
-
-    // Combine content into a complete HTML file
-    const fullContent = `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Computing Facts Site</title>
-            <style>${cssContent}</style>
-        </head>
-        <body>
-            ${htmlContent}
-            <script>${jsContent}<\/script>
-        </body>
-        </html>
-    `;
-
-    // Create a Blob from the HTML content
-    const blob = new Blob([fullContent], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-
-    // Create a temporary download link
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "computingfactssite.html"; // Name of the downloaded file
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-
-    // Revoke the blob URL to free memory
-    URL.revokeObjectURL(url);
-});
-
-// File Upload Button
-document.getElementById("uploadBtn").addEventListener("change", (event) => {
+function handleFileUpload(event) {
     const file = event.target.files[0];
-    if (file && file.type === "text/html") {
+    if (file && file.type === 'text/html') {
         const reader = new FileReader();
-        reader.onload = (e) => {
-            const content = e.target.result;
-
-            // Extract content using DOMParser
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(content, "text/html");
-
-            // Extract and load HTML content
-            const bodyContent = doc.body.innerHTML;
-            htmlEditor.setValue(bodyContent);
-
-            // Extract and load CSS content
-            const styleTag = doc.querySelector("style");
-            if (styleTag) cssEditor.setValue(styleTag.innerHTML);
-
-            // Extract and load JavaScript content
-            const scriptTag = doc.querySelector("script");
-            if (scriptTag) jsEditor.setValue(scriptTag.innerHTML);
-
-            // Update preview after loading
+        reader.onload = function(e) {
+            const htmlContent = e.target.result;
+            htmlEditor.setValue(htmlContent);
             updatePreview();
         };
         reader.readAsText(file);
-    } else {
-        alert("Please upload a valid HTML file.");
     }
-});
-
-
-
-// Save content to Local Storage
-function saveContentToLocalStorage() {
-    localStorage.setItem("htmlContent", htmlEditor.getValue());
-    localStorage.setItem("cssContent", cssEditor.getValue());
-    localStorage.setItem("jsContent", jsEditor.getValue());
 }
 
-// Function to update preview
-function updatePreview() {
-    const htmlContent = htmlEditor.getValue();
-    const cssContent = `<style>${cssEditor.getValue()}</style>`;
-    const jsContent = `<script>${jsEditor.getValue()}</script>`;
-    const fullContent = htmlContent + cssContent + jsContent;
+function popoutPreview() {
+    const previewWindow = window.open('', 'Preview', 'width=800,height=600');
+    previewWindow.document.write('<html><head><title>Preview</title></head><body></body></html>');
+    const iframe = previewWindow.document.createElement('iframe');
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    previewWindow.document.body.appendChild(iframe);
 
-    const previewFrame = document.getElementById('preview');
-    previewFrame.srcdoc = fullContent; // Inject the code into the iframe
+    const html = htmlEditor.getValue();
+    const css = cssEditor.getValue();
+    const js = jsEditor.getValue();
 
-    // Save the current editor content to localStorage on each preview update
-    saveContentToLocalStorage();
-}
-
-// Listen for changes in the editors to update preview and save content dynamically
-htmlEditor.session.on('change', updatePreview);
-cssEditor.session.on('change', updatePreview);
-jsEditor.session.on('change', updatePreview);
-
-// Load saved content if available
-function loadContentFromLocalStorage() {
-    const savedHtml = localStorage.getItem("htmlContent");
-    const savedCss = localStorage.getItem("cssContent");
-    const savedJs = localStorage.getItem("jsContent");
-
-    if (savedHtml) htmlEditor.setValue(savedHtml, -1); // The '-1' avoids moving cursor to start
-    if (savedCss) cssEditor.setValue(savedCss, -1);
-    if (savedJs) jsEditor.setValue(savedJs, -1);
-}
-
-// Call the function to load saved content when the page loads
-window.addEventListener("load", () => {
-    loadContentFromLocalStorage();  // Load saved content
-    updatePreview();  // Update preview immediately after page loads
-});
-
-// Pop-out button to open preview in a new window
-document.getElementById("popoutBtn").addEventListener("click", () => {
-    const htmlContent = htmlEditor.getValue();
-    const cssContent = `<style>${cssEditor.getValue()}</style>`;
-    const jsContent = `<script>${jsEditor.getValue()}</script>`;
-    const fullContent = `
+    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+    iframeDocument.open();
+    iframeDocument.write(`
         <html>
-        <head><meta charset="UTF-8"><title>Live Preview</title></head>
-        <body>${htmlContent}${cssContent}${jsContent}</body>
+            <head>
+                <style>${css}</style>
+            </head>
+            <body>
+                ${html}
+                <script>${js}</script>
+            </body>
         </html>
-    `;
+    `);
+    iframeDocument.close();
+}
 
-    // Create a new Blob containing the HTML content, set type to HTML
-    const previewBlob = new Blob([fullContent], { type: 'text/html' });
-    const previewUrl = URL.createObjectURL(previewBlob);
+function downloadCode() {
+    const html = htmlEditor.getValue();
+    const css = cssEditor.getValue();
+    const js = jsEditor.getValue();
 
-    // Open new window with Blob URL
-    const popoutWindow = window.open(previewUrl, '_blank');
-    if (!popoutWindow) {
-        alert("Please allow pop-ups to open the preview.");
-    }
-});
+    const zip = new JSZip();
+    zip.file("index.html", html);
+    zip.file("styles.css", css);
+    zip.file("script.js", js);
 
+    zip.generateAsync({ type: "blob" }).then(function(content) {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(content);
+        link.download = "project.zip";
+        link.click();
+    });
