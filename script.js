@@ -14,6 +14,46 @@ tabButtons.forEach(button => {
   });
 });
 
+function saveContentToLocalStorage() {
+    localStorage.setItem("htmlContent", htmlEditor.getValue());
+    localStorage.setItem("cssContent", cssEditor.getValue());
+    localStorage.setItem("jsContent", jsEditor.getValue());
+}
+
+function updatePreview() {
+    const htmlContent = htmlEditor.getValue();
+    const cssContent = `<style>${cssEditor.getValue()}</style>`;
+    const jsContent = `<script>${jsEditor.getValue()}</script>`;
+    const fullContent = htmlContent + cssContent + jsContent;
+
+    const previewFrame = document.getElementById('preview');
+    previewFrame.srcdoc = fullContent; // Inject the code into the iframe
+
+    // Save the current editor content to localStorage on each preview update
+    saveContentToLocalStorage();
+}
+
+// Listen for changes in the editors to update preview and save content dynamically
+htmlEditor.session.on('change', updatePreview);
+cssEditor.session.on('change', updatePreview);
+jsEditor.session.on('change', updatePreview);
+
+
+// Load saved content if available
+function loadContentFromLocalStorage() {
+    const savedHtml = localStorage.getItem("htmlContent");
+    const savedCss = localStorage.getItem("cssContent");
+    const savedJs = localStorage.getItem("jsContent");
+
+    if (savedHtml) htmlEditor.setValue(savedHtml, -1); // The '-1' avoids moving cursor to start
+    if (savedCss) cssEditor.setValue(savedCss, -1);
+    if (savedJs) jsEditor.setValue(savedJs, -1);
+}
+
+// Call the function to load saved content when the page loads
+window.addEventListener("load", loadContentFromLocalStorage);
+
+
 document.getElementById("popoutBtn").addEventListener("click", () => {
     const htmlContent = htmlEditor.getValue();
     const cssContent = `<style>${cssEditor.getValue()}</style>`;
