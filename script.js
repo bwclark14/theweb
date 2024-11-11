@@ -139,6 +139,7 @@ resetButton.addEventListener("click", () => {
   factImage.src = originalFacts[currentFactIndex].image;
 });
 
+// Tab switching functionality
 const tabButtons = document.querySelectorAll(".tab-button");
 const codeEditors = document.querySelectorAll(".code-editor");
 
@@ -146,6 +147,7 @@ tabButtons.forEach((button) => {
     button.addEventListener("click", () => {
         tabButtons.forEach(btn => btn.classList.remove("active"));
         codeEditors.forEach(editor => editor.classList.remove("active"));
+        
         button.classList.add("active");
         document.getElementById(button.getAttribute("data-tab") + "-editor").classList.add("active");
     });
@@ -174,10 +176,13 @@ function updatePreview() {
     iframeDocument.close();
 }
 
+// Update preview on load and on editor changes
+window.addEventListener('load', updatePreview);
 htmlEditor.session.on('change', updatePreview);
 cssEditor.session.on('change', updatePreview);
 jsEditor.session.on('change', updatePreview);
 
+// Download code files as a ZIP
 function downloadCode() {
     const html = htmlEditor.getValue();
     const css = cssEditor.getValue();
@@ -191,40 +196,20 @@ function downloadCode() {
     zip.generateAsync({ type: "blob" }).then(function(content) {
         const link = document.createElement("a");
         link.href = URL.createObjectURL(content);
-        link.download = "project.zip";
+        link.download = "code.zip";
         link.click();
     });
 }
 
-document.getElementById('downloadBtn').addEventListener('click', downloadCode);
+document.getElementById("downloadBtn").addEventListener("click", downloadCode);
 
 function popoutPreview() {
-    const previewWindow = window.open('', 'Preview', 'width=800,height=600');
-    const iframe = document.createElement("iframe");
+    const previewWindow = window.open("", "previewWindow", "width=800,height=600");
+    const iframe = document.createElement('iframe');
+    iframe.srcdoc = document.getElementById('preview').srcdoc;
     iframe.style.width = '100%';
     iframe.style.height = '100%';
     previewWindow.document.body.appendChild(iframe);
-
-    const html = htmlEditor.getValue();
-    const css = cssEditor.getValue();
-    const js = jsEditor.getValue();
-
-    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-    iframeDocument.open();
-    iframeDocument.write(`
-        <html>
-            <head>
-                <style>${css}</style>
-            </head>
-            <body>
-                ${html}
-                <script>${js}<\/script>
-            </body>
-        </html>
-    `);
-    iframeDocument.close();
 }
 
 document.getElementById('popoutBtn').addEventListener('click', popoutPreview);
-
-window.addEventListener('load', updatePreview);
