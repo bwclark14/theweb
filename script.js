@@ -14,6 +14,73 @@ tabButtons.forEach(button => {
   });
 });
 
+document.getElementById("downloadBtn").addEventListener("click", () => {
+    const htmlContent = htmlEditor.getValue();
+    const cssContent = `<style>${cssEditor.getValue()}</style>`;
+    const jsContent = `<script>${jsEditor.getValue()}</script>`;
+    const fullContent = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Live Code Editor - Downloaded</title>
+            ${cssContent}
+        </head>
+        <body>
+            ${htmlContent}
+            ${jsContent}
+        </body>
+        </html>
+    `;
+
+    // Create a blob from the HTML content
+    const blob = new Blob([fullContent], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+
+    // Create a link to download the file
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "live_code_editor.html";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url); // Free up memory
+});
+
+document.getElementById("uploadBtn").addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    if (file && file.type === "text/html") {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const content = e.target.result;
+
+            // Extract content using DOMParser
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(content, "text/html");
+
+            // Extract and load HTML content
+            const bodyContent = doc.body.innerHTML;
+            htmlEditor.setValue(bodyContent);
+
+            // Extract and load CSS content
+            const styleTag = doc.querySelector("style");
+            if (styleTag) cssEditor.setValue(styleTag.innerHTML);
+
+            // Extract and load JavaScript content
+            const scriptTag = doc.querySelector("script");
+            if (scriptTag) jsEditor.setValue(scriptTag.innerHTML);
+
+            // Update preview after loading
+            updatePreview();
+        };
+        reader.readAsText(file);
+    } else {
+        alert("Please upload a valid HTML file.");
+    }
+});
+
+
 function saveContentToLocalStorage() {
     localStorage.setItem("htmlContent", htmlEditor.getValue());
     localStorage.setItem("cssContent", cssEditor.getValue());
