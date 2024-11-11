@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Code Editor</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pickr-widget/1.8.2/pickr.min.css" />
 </head>
 <body>
     <!-- Header -->
@@ -33,6 +34,13 @@
             <div id="js-editor" class="code-editor"></div>
         </div>
 
+        <!-- Tool Buttons -->
+        <div class="tool-buttons">
+            <button id="beautify-button" class="beautify-btn">Beautify Code</button>
+            <button id="save-btn" class="save-btn">Save Code</button>
+            <div id="color-picker" class="color-picker"></div>
+        </div>
+
         <!-- Preview Container -->
         <div class="preview-container">
             <div class="preview-header">
@@ -42,7 +50,12 @@
         </div>
     </div>
 
+    <!-- Script Files -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-language_tools.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emmet-core@2.3.1/dist/emmet.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.0/beautify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr@1.8.2/dist/pickr.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
