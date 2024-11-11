@@ -14,6 +14,7 @@ tabButtons.forEach(button => {
   });
 });
 
+// Download Button
 document.getElementById("downloadBtn").addEventListener("click", () => {
     const htmlContent = htmlEditor.getValue();
     const cssContent = cssEditor.getValue();
@@ -52,7 +53,7 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
     URL.revokeObjectURL(url);
 });
 
-
+// File Upload Button
 document.getElementById("uploadBtn").addEventListener("change", (event) => {
     const file = event.target.files[0];
     if (file && file.type === "text/html") {
@@ -85,13 +86,14 @@ document.getElementById("uploadBtn").addEventListener("change", (event) => {
     }
 });
 
-
+// Save content to Local Storage
 function saveContentToLocalStorage() {
     localStorage.setItem("htmlContent", htmlEditor.getValue());
     localStorage.setItem("cssContent", cssEditor.getValue());
     localStorage.setItem("jsContent", jsEditor.getValue());
 }
 
+// Function to update preview
 function updatePreview() {
     const htmlContent = htmlEditor.getValue();
     const cssContent = `<style>${cssEditor.getValue()}</style>`;
@@ -110,7 +112,6 @@ htmlEditor.session.on('change', updatePreview);
 cssEditor.session.on('change', updatePreview);
 jsEditor.session.on('change', updatePreview);
 
-
 // Load saved content if available
 function loadContentFromLocalStorage() {
     const savedHtml = localStorage.getItem("htmlContent");
@@ -123,9 +124,12 @@ function loadContentFromLocalStorage() {
 }
 
 // Call the function to load saved content when the page loads
-window.addEventListener("load", loadContentFromLocalStorage);
+window.addEventListener("load", () => {
+    loadContentFromLocalStorage();  // Load saved content
+    updatePreview();  // Update preview immediately after page loads
+});
 
-
+// Pop-out button to open preview in a new window
 document.getElementById("popoutBtn").addEventListener("click", () => {
     const htmlContent = htmlEditor.getValue();
     const cssContent = `<style>${cssEditor.getValue()}</style>`;
@@ -147,7 +151,6 @@ document.getElementById("popoutBtn").addEventListener("click", () => {
         alert("Please allow pop-ups to open the preview.");
     }
 });
-
 
 // Initialize Ace editor for HTML
 const htmlEditor = ace.edit("html-editor");
