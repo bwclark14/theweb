@@ -147,13 +147,17 @@ header select {
     flex-direction: column; /* Stack the code editors on top and preview on bottom */
   }
 
-  .editor-container {
-   // height: 50%; /* Adjust heights as needed */
+.editor-container {
     width: 100%;
-  }
+    display: flex;
+    flex-direction: row;
+    border-right: 2px solid #ccc;
+    padding: 10px;
+}
 
-  .preview-container {
-   // height: 50%; /* Adjust heights as needed */
+.preview-container {
     width: 100%;
-  }
+    display: flex;
+    flex-direction: row;
+}
 }
