@@ -151,40 +151,7 @@ jsEditor.setOptions({
     tabSize: 2
 });
 
-// Resize Preview Window
-const resizeHandle = document.getElementById('resizeHandle');
-const previewContainer = document.querySelector('.preview-container');
-const editorContainer = document.querySelector('.editor-container');
-let isResizing = false;
-let lastDownX = 0;
-
-// Add mouse events to handle resizing
-resizeHandle.addEventListener('mousedown', (e) => {
-    isResizing = true;
-    lastDownX = e.clientX;
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', stopResizing);
-});
-
-function handleMouseMove(e) {
-    if (!isResizing) return;
-    const offset = e.clientX - lastDownX;
-    const newWidth = editorContainer.offsetWidth + offset;
-    editorContainer.style.width = `${newWidth}px`;
-    previewContainer.style.width = `calc(100% - ${newWidth}px)`;
-    lastDownX = e.clientX;
-}
-
-function stopResizing() {
-    isResizing = false;
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', stopResizing);
-}
-
-// Optional: Update the preview dynamically when resizing the editor
-window.addEventListener('resize', updatePreview);
-
-// Function to update the preview iframe based on editor content
+// Function to update the preview iframe dynamically based on editor content
 function updatePreview() {
     const html = htmlEditor.getValue();
     const css = cssEditor.getValue();
@@ -211,11 +178,12 @@ function updatePreview() {
 // Initialize the preview with the default content
 updatePreview();
 
-// Event listeners for buttons to handle file upload and popout
+// Event listeners for file upload, popout, and download
 document.getElementById('uploadBtn').addEventListener('change', handleFileUpload);
 document.getElementById('popoutBtn').addEventListener('click', popoutPreview);
 document.getElementById('downloadBtn').addEventListener('click', downloadCode);
 
+// File upload handler
 function handleFileUpload(event) {
     const file = event.target.files[0];
     if (file && file.type === 'text/html') {
@@ -229,6 +197,7 @@ function handleFileUpload(event) {
     }
 }
 
+// Popout preview in a new window
 function popoutPreview() {
     const previewWindow = window.open('', 'Preview', 'width=800,height=600');
     previewWindow.document.write('<html><head><title>Preview</title></head><body></body></html>');
@@ -257,6 +226,7 @@ function popoutPreview() {
     iframeDocument.close();
 }
 
+// Download code as a ZIP
 function downloadCode() {
     const html = htmlEditor.getValue();
     const css = cssEditor.getValue();
@@ -273,3 +243,4 @@ function downloadCode() {
         link.download = "project.zip";
         link.click();
     });
+}
