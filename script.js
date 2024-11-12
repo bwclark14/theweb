@@ -261,7 +261,7 @@ popoutBtn.addEventListener("click", () => {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Preview</title>
+            <title>Live Preview</title>
             ${cssContent}
         </head>
         <body>
@@ -271,16 +271,17 @@ popoutBtn.addEventListener("click", () => {
         </html>
     `;
 
-    // Open a new window for the pop-out preview
-    const previewWindow = window.open("", "_blank");
-    if (previewWindow) {
-        previewWindow.document.open();
-        previewWindow.document.write(fullContent);
-        previewWindow.document.close();
-    } else {
+    // Create a Blob with the HTML content
+    const previewBlob = new Blob([fullContent], { type: 'text/html' });
+    const previewUrl = URL.createObjectURL(previewBlob);
+
+    // Open a new window with the Blob URL
+    const previewWindow = window.open(previewUrl, '_blank');
+    if (!previewWindow) {
         alert("Please allow pop-ups to open the preview.");
     }
 });
+
 
 // Resize preview functionality
 const resizeHandle = document.getElementById("resizeHandle");
