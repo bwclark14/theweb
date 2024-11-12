@@ -293,45 +293,62 @@ function stopResize() {
     document.removeEventListener('mouseup', stopResize);
 }
 
-// Download files functionality
-document.getElementById('downloadBtn').addEventListener('click', () => {
-    const htmlContent = htmlEditor.getValue();
-    const cssContent = cssEditor.getValue();
-    const jsContent = jsEditor.getValue();
-    
-    // Function to download each file type
-    function downloadFile(content, filename) {
-        const blob = new Blob([content], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
+// Required libraries for download and file handling
+const downloadBtn = document.getElementById("downloadBtn");
+const uploadInput = document.getElementById("uploadInput");
+const resizeHandle = document.getElementById("resizeHandle");
 
-    // Prompt for file names and download each file
-    downloadFile(htmlContent, prompt("Enter HTML file name", "index.html"));
-    downloadFile(cssContent, prompt("Enter CSS file name", "style.css"));
-    downloadFile(jsContent, prompt("Enter JS file name", "script.js"));
+// Download project files in a zip archive
+downloadBtn.addEventListener("click", () => {
+    const zip = new JSZip();
+    zip.file("mysite.html", htmlEditor.getValue());
+    zip.file("mysite.css", cssEditor.getValue());
+    zip.file("mysite.js", jsEditor.getValue());
+
+    zip.generateAsync({ type: "blob" }).then((content) => {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(content);
+        link.download = "mysite.zip";
+        link.click();
+    });
 });
 
-// Upload files functionality
-document.getElementById('uploadBtn').addEventListener('change', (event) => {
+// Upload files and load content into editors
+uploadInput.addEventListener("change", async (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-        const content = reader.result;
-        const fileType = file.name.split('.').pop();
-
-        if (fileType === 'html') htmlEditor.setValue(content);
-        else if (fileType === 'css') cssEditor.setValue(content);
-        else if (fileType === 'js') jsEditor.setValue(content);
-    };
-    reader.readAsText(file);
+    if (file.name.endsWith(".zip")) {
+        const zip = await JSZip.loadAsync(file);
+        zip.forEach(async (relativePath, fileEntry) => {
+            const content = await fileEntry.async("text");
+            if (relativePath.endsWith(".html")) htmlEditor.setValue(content, -1);
+            if (relativePath.endsWith(".css")) cssEditor.setValue(content, -1);
+            if (relativePath.endsWith(".js")) jsEditor.setValue(content, -1);
+        });
+    } else {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const content = e.target.result;
+            if (file.name.endsWith(".html")) htmlEditor.setValue(content, -1);
+            if (file.name.endsWith(".css")) cssEditor.setValue(content, -1);
+            if (file.name.endsWith(".js")) jsEditor.setValue(content, -1);
+        };
+        reader.readAsText(file);
+    }
 });
+
+// Resize preview window using a drag handle
+resizeHandle.addEventListener("mousedown", (e) => {
+    document.addEventListener("mousemove", resizePreview);
+    document.addEventListener("mouseup", () => {
+        document.removeEventListener("mousemove", resizePreview);
+    });
+});
+
+function resizePreview(e) {
+    const newEditorWidth = e.clientX;
+    document.querySelector(".editor-container").style.width = `${newEditorWidth}px`;
+    document.querySelector(".preview-container").style.width = `calc(100% - ${newEditorWidth}px)`;
+}
 
