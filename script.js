@@ -1,4 +1,3 @@
-
 // Initialize Ace editor for HTML
 const htmlEditor = ace.edit("html-editor");
 htmlEditor.setTheme("ace/theme/dracula");
@@ -164,6 +163,8 @@ function resetFacts() {
 factButton.addEventListener("click", getRandomFact);
 resetButton.addEventListener("click", resetFacts);
 `);
+
+// Set options for JavaScript editor
 jsEditor.setOptions({
     fontSize: "14px",
     showPrintMargin: false,
@@ -171,117 +172,6 @@ jsEditor.setOptions({
     showLineNumbers: true,
     tabSize: 2
 });
-
-// Function to update preview
-function updatePreview() {
-    const htmlContent = htmlEditor.getValue();
-    const cssContent = `<style>${cssEditor.getValue()}</style>`;
-    const jsContent = `<script>${jsEditor.getValue()}</script>`;
-    const fullContent = htmlContent + cssContent + jsContent;
-
-    const previewFrame = document.getElementById('preview');
-    previewFrame.srcdoc = fullContent; // Inject the code into the iframe
-}
-
-// Initial preview update
-updatePreview();
-
-// Listen for changes in the editors to update preview dynamically
-htmlEditor.session.on('change', updatePreview);
-cssEditor.session.on('change', updatePreview);
-jsEditor.session.on('change', updatePreview);
-// Tab switching logic
-const tabButtons = document.querySelectorAll(".tab-button");
-const codeEditors = document.querySelectorAll(".code-editor");
-
-tabButtons.forEach(button => {
-  button.addEventListener("click", () => {
-    // Remove 'active' class from all buttons and editors
-    tabButtons.forEach(btn => btn.classList.remove("active"));
-    codeEditors.forEach(editor => editor.classList.remove("active"));
-
-    // Add 'active' class to the clicked button and the corresponding editor
-    button.classList.add("active");
-    document.getElementById(button.getAttribute("data-tab") + "-editor").classList.add("active");
-  });
-});
-
-function saveContentToLocalStorage() {
-    localStorage.setItem("htmlContent", htmlEditor.getValue());
-    localStorage.setItem("cssContent", cssEditor.getValue());
-    localStorage.setItem("jsContent", jsEditor.getValue());
-}
-
-function updatePreview() {
-    const htmlContent = htmlEditor.getValue();
-    const cssContent = `<style>${cssEditor.getValue()}</style>`;
-    const jsContent = `<script>${jsEditor.getValue()}</script>`;
-    const fullContent = htmlContent + cssContent + jsContent;
-
-    const previewFrame = document.getElementById('preview');
-    previewFrame.srcdoc = fullContent; // Inject the code into the iframe
-
-    // Save the current editor content to localStorage on each preview update
-    saveContentToLocalStorage();
-}
-
-// Listen for changes in the editors to update preview and save content dynamically
-htmlEditor.session.on('change', updatePreview);
-cssEditor.session.on('change', updatePreview);
-jsEditor.session.on('change', updatePreview);
-
-
-// Load saved content if available
-function loadContentFromLocalStorage() {
-    const savedHtml = localStorage.getItem("htmlContent");
-    const savedCss = localStorage.getItem("cssContent");
-    const savedJs = localStorage.getItem("jsContent");
-
-    if (savedHtml) htmlEditor.setValue(savedHtml, -1); // The '-1' avoids moving cursor to start
-    if (savedCss) cssEditor.setValue(savedCss, -1);
-    if (savedJs) jsEditor.setValue(savedJs, -1);
-}
-
-// Call the function to load saved content when the page loads
-window.addEventListener("load", loadContentFromLocalStorage);
-
-
-document.getElementById("popoutBtn").addEventListener("click", () => {
-    const htmlContent = htmlEditor.getValue();
-    const cssContent = `<style>${cssEditor.getValue()}</style>`;
-    const jsContent = `<script>${jsEditor.getValue()}</script>`;
-    const fullContent = `
-        <html>
-        <head><meta charset="UTF-8"><title>Live Preview</title></head>
-        <body>${htmlContent}${cssContent}${jsContent}</body>
-        </html>
-    `;
-
-    // Create a new Blob containing the HTML content, set type to HTML
-    const previewBlob = new Blob([fullContent], { type: 'text/html' });
-    const previewUrl = URL.createObjectURL(previewBlob);
-
-    // Open new window with Blob URL
-    const popoutWindow = window.open(previewUrl, '_blank');
-    if (!popoutWindow) {
-        alert("Please allow pop-ups to open the preview.");
-    }
-});
-
-
-//
-// Initialize the Ace editors
-const htmlEditor = ace.edit("html-editor");
-htmlEditor.setTheme("ace/theme/monokai");
-htmlEditor.session.setMode("ace/mode/html");
-
-const cssEditor = ace.edit("css-editor");
-cssEditor.setTheme("ace/theme/monokai");
-cssEditor.session.setMode("ace/mode/css");
-
-const jsEditor = ace.edit("js-editor");
-jsEditor.setTheme("ace/theme/monokai");
-jsEditor.session.setMode("ace/mode/javascript");
 
 // Function to encode content to Base64
 function toBase64(str) {
@@ -316,47 +206,43 @@ function updateUrl() {
 }
 
 // Function to load content from the URL and decode it
-function loadContentFromUrl() {
-    const params = new URLSearchParams(window.location.search);
+function loadFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
 
-    // Get the Base64 content from the URL
-    const htmlContent = params.get('html');
-    const cssContent = params.get('css');
-    const jsContent = params.get('js');
+    const encodedHtml = urlParams.get("html");
+    const encodedCss = urlParams.get("css");
+    const encodedJs = urlParams.get("js");
 
-    // Decode the Base64 content and set it in the editors
-    if (htmlContent) {
-        htmlEditor.setValue(fromBase64(htmlContent), -1);
-    }
-    if (cssContent) {
-        cssEditor.setValue(fromBase64(cssContent), -1);
-    }
-    if (jsContent) {
-        jsEditor.setValue(fromBase64(jsContent), -1);
-    }
+    if (encodedHtml && encodedCss && encodedJs) {
+        // Decode and set the content in the editors
+        htmlEditor.setValue(fromBase64(encodedHtml));
+        cssEditor.setValue(fromBase64(encodedCss));
+        jsEditor.setValue(fromBase64(encodedJs));
 
-    // Update the preview with the loaded content
-    updatePreview();
+        // Update the preview
+        updatePreview();
+    }
 }
 
-// Call the function to load content from the URL when the page loads
-window.addEventListener("load", loadContentFromUrl);
-
-// Function to update the preview iframe with the content
+// Function to update the live preview
 function updatePreview() {
-    const iframe = document.getElementById("preview");
-    const htmlContent = htmlEditor.getValue();
-    const cssContent = cssEditor.getValue();
-    const jsContent = jsEditor.getValue();
+    const previewIframe = document.getElementById("preview-iframe");
+    const iframeDoc = previewIframe.contentDocument || previewIframe.contentWindow.document;
 
-    // Set the iframe's content
-    iframe.contentWindow.document.open();
-    iframe.contentWindow.document.write(htmlContent);
-    iframe.contentWindow.document.write(`<style>${cssContent}</style>`);
-    iframe.contentWindow.document.write(`<script>${jsContent}</script>`);
-    iframe.contentWindow.document.close();
+    iframeDoc.open();
+    iframeDoc.write(htmlEditor.getValue());
+    iframeDoc.write("<style>" + cssEditor.getValue() + "</style>");
+    iframeDoc.write("<script>" + jsEditor.getValue() + "<\/script>");
+    iframeDoc.close();
 }
 
-// Add an event listener for the "Generate Shareable URL" button
-document.getElementById("shareBtn").addEventListener("click", updateUrl);
+// Event listeners for content change in editors
+htmlEditor.getSession().on("change", updateUrl);
+cssEditor.getSession().on("change", updateUrl);
+jsEditor.getSession().on("change", updateUrl);
 
+// Initialize preview
+updatePreview();
+
+// Load content from the URL if present
+window.addEventListener("load", loadFromUrl);
