@@ -266,3 +266,72 @@ document.getElementById("popoutBtn").addEventListener("click", () => {
         alert("Please allow pop-ups to open the preview.");
     }
 });
+
+// Initialize Ace editors (HTML, CSS, JS) with previous code...
+// Function to save editor content to localStorage
+// Function to load content from localStorage on page load
+
+// Resize preview functionality
+const resizeHandle = document.querySelector('.resize-handle');
+const editorContainer = document.querySelector('.editor-container');
+const previewContainer = document.querySelector('.preview-container');
+
+resizeHandle.addEventListener('mousedown', (event) => {
+    event.preventDefault();
+    document.addEventListener('mousemove', resize);
+    document.addEventListener('mouseup', stopResize);
+});
+
+function resize(event) {
+    const containerWidth = event.clientX / window.innerWidth * 100;
+    editorContainer.style.width = `${containerWidth}%`;
+    previewContainer.style.width = `${100 - containerWidth}%`;
+}
+
+function stopResize() {
+    document.removeEventListener('mousemove', resize);
+    document.removeEventListener('mouseup', stopResize);
+}
+
+// Download files functionality
+document.getElementById('downloadBtn').addEventListener('click', () => {
+    const htmlContent = htmlEditor.getValue();
+    const cssContent = cssEditor.getValue();
+    const jsContent = jsEditor.getValue();
+    
+    // Function to download each file type
+    function downloadFile(content, filename) {
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Prompt for file names and download each file
+    downloadFile(htmlContent, prompt("Enter HTML file name", "index.html"));
+    downloadFile(cssContent, prompt("Enter CSS file name", "style.css"));
+    downloadFile(jsContent, prompt("Enter JS file name", "script.js"));
+});
+
+// Upload files functionality
+document.getElementById('uploadBtn').addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+        const content = reader.result;
+        const fileType = file.name.split('.').pop();
+
+        if (fileType === 'html') htmlEditor.setValue(content);
+        else if (fileType === 'css') cssEditor.setValue(content);
+        else if (fileType === 'js') jsEditor.setValue(content);
+    };
+    reader.readAsText(file);
+});
+
