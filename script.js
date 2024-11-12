@@ -255,21 +255,23 @@ popoutBtn.addEventListener("click", () => {
     const jsContent = `<script>${jsEditor.getValue()}</script>`;
 
     // Combine HTML, CSS, and JavaScript into one document for preview
-    const fullContent = `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Live Preview</title>
-            ${cssContent}
-        </head>
-        <body>
-            ${htmlContent}
-            ${jsContent}
-        </body>
-        </html>
-    `;
+   const fullContent = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Live Preview</title>
+        ${cssContent}
+    </head>
+    <body>
+        ${htmlContent}
+        <script>
+            ${jsEditor.getValue()}
+        <\/script>
+    </body>
+    </html>
+`;
 
     // Create a Blob with the HTML content
     const previewBlob = new Blob([fullContent], { type: 'text/html' });
