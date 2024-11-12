@@ -268,3 +268,56 @@ document.getElementById("popoutBtn").addEventListener("click", () => {
     }
 });
 
+
+//
+// Function to encode content to Base64
+function toBase64(str) {
+    return btoa(unescape(encodeURIComponent(str))); // Converts to Base64
+}
+
+// Function to decode Base64 content
+function fromBase64(base64Str) {
+    return decodeURIComponent(escape(atob(base64Str))); // Converts from Base64
+}
+
+// Create the shareable URL
+document.getElementById("shareBtn").addEventListener("click", () => {
+    // Get the content from the editors
+    const htmlContent = htmlEditor.getValue();
+    const cssContent = cssEditor.getValue();
+    const jsContent = jsEditor.getValue();
+
+    // Encode the content to Base64
+    const encodedHtml = toBase64(htmlContent);
+    const encodedCss = toBase64(cssContent);
+    const encodedJs = toBase64(jsContent);
+
+    // Create the shareable URL with Base64-encoded content
+    const shareableUrl = `${window.location.origin}?html=${encodedHtml}&css=${encodedCss}&js=${encodedJs}`;
+
+    // Display the URL to the user (or handle the sharing in another way)
+    alert("Share your website with this link: " + shareableUrl);
+});
+
+// Function to load content from the URL and decode it
+function loadContentFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+
+    // Get the content for HTML, CSS, and JavaScript from the URL
+    const htmlContent = params.get('html');
+    const cssContent = params.get('css');
+    const jsContent = params.get('js');
+
+    // Decode the Base64 content and set it in the editors
+    if (htmlContent) htmlEditor.setValue(fromBase64(htmlContent), -1);
+    if (cssContent) cssEditor.setValue(fromBase64(cssContent), -1);
+    if (jsContent) jsEditor.setValue(fromBase64(jsContent), -1);
+
+    // Update the preview with the loaded content
+    updatePreview();
+}
+
+// Call the function to load content from the URL when the page loads
+window.addEventListener("load", loadContentFromUrl);
+
+
