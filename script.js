@@ -271,6 +271,7 @@ document.getElementById("popoutBtn").addEventListener("click", () => {
 
 //
 // Function to encode content to Base64
+// Function to encode content to Base64
 function toBase64(str) {
     return btoa(unescape(encodeURIComponent(str))); // Converts to Base64
 }
@@ -280,9 +281,8 @@ function fromBase64(base64Str) {
     return decodeURIComponent(escape(atob(base64Str))); // Converts from Base64
 }
 
-// Create the shareable URL
-document.getElementById("shareBtn").addEventListener("click", () => {
-    // Get the content from the editors
+// Update the URL with the latest content
+function updateUrl() {
     const htmlContent = htmlEditor.getValue();
     const cssContent = cssEditor.getValue();
     const jsContent = jsEditor.getValue();
@@ -292,13 +292,14 @@ document.getElementById("shareBtn").addEventListener("click", () => {
     const encodedCss = toBase64(cssContent);
     const encodedJs = toBase64(jsContent);
 
-    // Create the shareable URL with Base64-encoded content
+    // Update the URL without reloading the page
     const shareableUrl = `${window.location.origin}?html=${encodedHtml}&css=${encodedCss}&js=${encodedJs}`;
+    window.history.replaceState(null, "", shareableUrl);
 
-    // Show the URL in the shareable container
+    // Display the shareable URL in the UI
     const shareUrlText = document.getElementById("share-url-text");
     shareUrlText.innerHTML = `Your Shareable URL: <a href="${shareableUrl}" target="_blank">${shareableUrl}</a>`;
-});
+}
 
 // Function to load content from the URL and decode it
 function loadContentFromUrl() {
@@ -336,3 +337,5 @@ function updatePreview() {
     iframe.contentWindow.document.close();
 }
 
+// Add an event listener for the "Generate Shareable URL" button
+document.getElementById("shareBtn").addEventListener("click", updateUrl);
