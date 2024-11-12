@@ -295,8 +295,9 @@ document.getElementById("shareBtn").addEventListener("click", () => {
     // Create the shareable URL with Base64-encoded content
     const shareableUrl = `${window.location.origin}?html=${encodedHtml}&css=${encodedCss}&js=${encodedJs}`;
 
-    // Display the URL to the user (or handle the sharing in another way)
-    alert("Share your website with this link: " + shareableUrl);
+    // Show the URL in the shareable container
+    const shareUrlText = document.getElementById("share-url-text");
+    shareUrlText.innerHTML = `Your Shareable URL: <a href="${shareableUrl}" target="_blank">${shareableUrl}</a>`;
 });
 
 // Function to load content from the URL and decode it
@@ -320,4 +321,18 @@ function loadContentFromUrl() {
 // Call the function to load content from the URL when the page loads
 window.addEventListener("load", loadContentFromUrl);
 
+// Function to update the preview iframe
+function updatePreview() {
+    const iframe = document.getElementById("preview");
+    const htmlContent = htmlEditor.getValue();
+    const cssContent = cssEditor.getValue();
+    const jsContent = jsEditor.getValue();
+
+    // Set the iframe's content
+    iframe.contentWindow.document.open();
+    iframe.contentWindow.document.write(htmlContent);
+    iframe.contentWindow.document.write(`<style>${cssContent}</style>`);
+    iframe.contentWindow.document.write(`<script>${jsContent}</script>`);
+    iframe.contentWindow.document.close();
+}
 
