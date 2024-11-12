@@ -171,6 +171,44 @@ jsEditor.setOptions({
     tabSize: 2
 });
 
+const tabButtons = document.querySelectorAll(".tab-button");
+const codeEditors = document.querySelectorAll(".code-editor");
+
+tabButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    // Remove 'active' class from all buttons and editors
+    tabButtons.forEach(btn => btn.classList.remove("active"));
+    codeEditors.forEach(editor => editor.classList.remove("active"));
+
+    // Add 'active' class to the clicked button and the corresponding editor
+    button.classList.add("active");
+    document.getElementById(button.getAttribute("data-tab") + "-editor").classList.add("active");
+  });
+});
+
+document.getElementById("popoutBtn").addEventListener("click", () => {
+    const htmlContent = htmlEditor.getValue();
+    const cssContent = `<style>${cssEditor.getValue()}</style>`;
+    const jsContent = `<script>${jsEditor.getValue()}</script>`;
+    const fullContent = `
+        <html>
+        <head><meta charset="UTF-8"><title>Live Preview</title></head>
+        <body>${htmlContent}${cssContent}${jsContent}</body>
+        </html>
+    `;
+
+    // Create a new Blob containing the HTML content, set type to HTML
+    const previewBlob = new Blob([fullContent], { type: 'text/html' });
+    const previewUrl = URL.createObjectURL(previewBlob);
+
+    // Open new window with Blob URL
+    const popoutWindow = window.open(previewUrl, '_blank');
+    if (!popoutWindow) {
+        alert("Please allow pop-ups to open the preview.");
+    }
+});
+
+
 // Consolidated updatePreview function
 function updatePreview() {
     const htmlContent = htmlEditor.getValue();
