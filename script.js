@@ -277,10 +277,16 @@ popoutBtn.addEventListener("click", () => {
 
     // Open a new window with the Blob URL
     const previewWindow = window.open(previewUrl, '_blank');
+
+    // Check if the preview window opened successfully
     if (!previewWindow) {
-        alert("Please allow pop-ups to open the preview.");
+        alert("Please enable pop-ups in your browser settings to view the preview.");
+    } else {
+        // Revoke the Blob URL after the preview window has loaded to release memory
+        setTimeout(() => URL.revokeObjectURL(previewUrl), 100);
     }
 });
+
 
 
 // Resize preview functionality
