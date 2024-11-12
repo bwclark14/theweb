@@ -228,4 +228,64 @@ uploadInput.addEventListener("change", async (event) => {
     });
   } else {
     const reader = new FileReader();
-    reader
+    reader.onload = (e) => {
+      const content = e.target.result;
+      if (file.name.endsWith(".html")) htmlEditor.setValue(content, -1);
+      if (file.name.endsWith(".css")) cssEditor.setValue(content, -1);
+      if (file.name.endsWith(".js")) jsEditor.setValue(content, -1);
+    };
+    reader.readAsText(file);
+  }
+});
+
+// Popout Preview Functionality
+const popoutBtn = document.getElementById("popoutBtn");
+
+popoutBtn.addEventListener("click", () => {
+  const htmlContent = htmlEditor.getValue();
+  const cssContent = \`<style>\${cssEditor.getValue()}</style>\`;
+  const jsContent = \`<script>\${jsEditor.getValue()}</script>\`;
+
+  const fullContent = \`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Live Preview</title>
+        \${cssContent}
+    </head>
+    <body>
+        \${htmlContent}
+        <script>
+            \${jsEditor.getValue()}
+        </script>
+    </body>
+    </html>
+  \`;
+
+  const previewBlob = new Blob([fullContent], { type: 'text/html' });
+  const previewUrl = URL.createObjectURL(previewBlob);
+
+  const previewWindow = window.open(previewUrl, '_blank');
+  if (!previewWindow) {
+    alert("Please enable pop-ups in your browser settings to view the preview.");
+  } else {
+    previewWindow.onload = () => URL.revokeObjectURL(previewUrl);
+  }
+});
+
+// Resizable Preview Functionality
+const resizeHandle = document.getElementById("resizeHandle");
+resizeHandle.addEventListener("mousedown", (e) => {
+  document.addEventListener("mousemove", resizePreview);
+  document.addEventListener("mouseup", () => {
+    document.removeEventListener("mousemove", resizePreview);
+  });
+});
+
+function resizePreview(e) {
+  const newEditorWidth = e.clientX;
+  document.querySelector(".editor-container").style.width = \`\${newEditorWidth}px\`;
+  document.querySelector(".preview-container").style.width = \`calc(100% - \${newEditorWidth}px)\`;
+}
