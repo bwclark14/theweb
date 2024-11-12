@@ -163,8 +163,6 @@ function resetFacts() {
 factButton.addEventListener("click", getRandomFact);
 resetButton.addEventListener("click", resetFacts);
 `);
-
-// Set options for JavaScript editor
 jsEditor.setOptions({
     fontSize: "14px",
     showPrintMargin: false,
@@ -173,17 +171,52 @@ jsEditor.setOptions({
     tabSize: 2
 });
 
-// Function to encode content to Base64
+// Consolidated updatePreview function
+function updatePreview() {
+    const htmlContent = htmlEditor.getValue();
+    const cssContent = `<style>${cssEditor.getValue()}</style>`;
+    const jsContent = `<script>${jsEditor.getValue()}<\/script>`;
+    const fullContent = htmlContent + cssContent + jsContent;
+
+    const previewFrame = document.getElementById('preview');
+    previewFrame.srcdoc = fullContent; // Using srcdoc for simplicity
+
+    // Save content to localStorage as a fallback
+    saveContentToLocalStorage();
+}
+
+// Function to save editor content to localStorage
+function saveContentToLocalStorage() {
+    localStorage.setItem("htmlContent", htmlEditor.getValue());
+    localStorage.setItem("cssContent", cssEditor.getValue());
+    localStorage.setItem("jsContent", jsEditor.getValue());
+}
+
+// Load saved content from localStorage if available
+function loadContentFromLocalStorage() {
+    const savedHtml = localStorage.getItem("htmlContent");
+    const savedCss = localStorage.getItem("cssContent");
+    const savedJs = localStorage.getItem("jsContent");
+
+    if (savedHtml) htmlEditor.setValue(savedHtml, -1); // The '-1' avoids moving cursor to start
+    if (savedCss) cssEditor.setValue(savedCss, -1);
+    if (savedJs) jsEditor.setValue(savedJs, -1);
+}
+
+// Call the function to load saved content when the page loads
+window.addEventListener("load", loadContentFromLocalStorage);
+
+// Encode content to Base64 for URL
 function toBase64(str) {
     return btoa(unescape(encodeURIComponent(str))); // Convert to Base64
 }
 
-// Function to decode Base64 content
+// Decode Base64 content
 function fromBase64(base64Str) {
     return decodeURIComponent(escape(atob(base64Str))); // Convert from Base64
 }
 
-// Function to update the URL dynamically
+// Update the URL dynamically with Base64 encoded content
 function updateUrl() {
     const htmlContent = htmlEditor.getValue();
     const cssContent = cssEditor.getValue();
@@ -205,44 +238,37 @@ function updateUrl() {
     shareUrlText.innerHTML = `Your Shareable URL: <a href="${shareableUrl}" target="_blank">${shareableUrl}</a>`;
 }
 
-// Function to load content from the URL and decode it
-function loadFromUrl() {
-    const urlParams = new URLSearchParams(window.location.search);
+// Load content from the URL and decode it
+function loadContentFromUrl() {
+    const params = new URLSearchParams(window.location.search);
 
-    const encodedHtml = urlParams.get("html");
-    const encodedCss = urlParams.get("css");
-    const encodedJs = urlParams.get("js");
+    // Get the Base64 content from the URL
+    const htmlContent = params.get('html');
+    const cssContent = params.get('css');
+    const jsContent = params.get('js');
 
-    if (encodedHtml && encodedCss && encodedJs) {
-        // Decode and set the content in the editors
-        htmlEditor.setValue(fromBase64(encodedHtml));
-        cssEditor.setValue(fromBase64(encodedCss));
-        jsEditor.setValue(fromBase64(encodedJs));
-
-        // Update the preview
-        updatePreview();
+    // Decode and set the content in the editors
+    if (htmlContent) {
+        htmlEditor.setValue(fromBase64(htmlContent), -1);
     }
+    if (cssContent) {
+        cssEditor.setValue(fromBase64(cssContent), -1);
+    }
+    if (jsContent) {
+        jsEditor.setValue(fromBase64(jsContent), -1);
+    }
+
+    // Update the preview with the loaded content
+    updatePreview();
 }
 
-// Function to update the live preview
-function updatePreview() {
-    const previewIframe = document.getElementById("preview-iframe");
-    const iframeDoc = previewIframe.contentDocument || previewIframe.contentWindow.document;
+// Call the function to load content from the URL when the page loads
+window.addEventListener("load", loadContentFromUrl);
 
-    iframeDoc.open();
-    iframeDoc.write(htmlEditor.getValue());
-    iframeDoc.write("<style>" + cssEditor.getValue() + "</style>");
-    iframeDoc.write("<script>" + jsEditor.getValue() + "<\/script>");
-    iframeDoc.close();
-}
+// Event listener for the "Generate Shareable URL" button
+document.getElementById("shareBtn").addEventListener("click", updateUrl);
 
-// Event listeners for content change in editors
-htmlEditor.getSession().on("change", updateUrl);
-cssEditor.getSession().on("change", updateUrl);
-jsEditor.getSession().on("change", updateUrl);
-
-// Initialize preview
-updatePreview();
-
-// Load content from the URL if present
-window.addEventListener("load", loadFromUrl);
+// Event listeners to update preview dynamically as you type in the editors
+htmlEditor.session.on('change', updatePreview);
+cssEditor.session.on('change', updatePreview);
+jsEditor.session.on('change', updatePreview);
