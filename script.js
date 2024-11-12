@@ -246,26 +246,41 @@ uploadInput.addEventListener("change", async (event) => {
     }
 });
 
-document.getElementById("popoutBtn").addEventListener("click", () => {
+// Popout Preview functionality
+const popoutBtn = document.getElementById("popoutBtn");
+
+popoutBtn.addEventListener("click", () => {
     const htmlContent = htmlEditor.getValue();
     const cssContent = `<style>${cssEditor.getValue()}</style>`;
     const jsContent = `<script>${jsEditor.getValue()}</script>`;
+
+    // Combine HTML, CSS, and JavaScript into one document for preview
     const fullContent = `
-        <html>
-        <head><meta charset="UTF-8"><title>Live Preview</title></head>
-        <body>${htmlContent}${cssContent}${jsContent}</body>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Preview</title>
+            ${cssContent}
+        </head>
+        <body>
+            ${htmlContent}
+            ${jsContent}
+        </body>
         </html>
     `;
 
-    // Create a new Blob containing the HTML content, set type to HTML
-    const previewBlob = new Blob([fullContent], { type: 'text/html' });
-    const previewUrl = URL.createObjectURL(previewBlob);
-
-    // Open new window with Blob URL
-    const popoutWindow = window.open(previewUrl, '_blank');
-    if (!popoutWindow) {
+    // Open a new window for the pop-out preview
+    const previewWindow = window.open("", "_blank");
+    if (previewWindow) {
+        previewWindow.document.open();
+        previewWindow.document.write(fullContent);
+        previewWindow.document.close();
+    } else {
         alert("Please allow pop-ups to open the preview.");
     }
+});
 
 // Resize preview functionality
 const resizeHandle = document.getElementById("resizeHandle");
