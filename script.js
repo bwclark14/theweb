@@ -247,6 +247,7 @@ uploadInput.addEventListener("change", async (event) => {
 });
 
 // Popout Preview functionality
+// Popout Preview functionality
 const popoutBtn = document.getElementById("popoutBtn");
 
 popoutBtn.addEventListener("click", () => {
@@ -255,7 +256,7 @@ popoutBtn.addEventListener("click", () => {
     const jsContent = `<script>${jsEditor.getValue()}</script>`;
 
     // Combine HTML, CSS, and JavaScript into one document for preview
-   const fullContent = `
+    const fullContent = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -271,7 +272,7 @@ popoutBtn.addEventListener("click", () => {
         <\/script>
     </body>
     </html>
-`;
+    `;
 
     // Create a Blob with the HTML content
     const previewBlob = new Blob([fullContent], { type: 'text/html' });
@@ -284,10 +285,11 @@ popoutBtn.addEventListener("click", () => {
     if (!previewWindow) {
         alert("Please enable pop-ups in your browser settings to view the preview.");
     } else {
-        // Revoke the Blob URL after the preview window has loaded to release memory
-        setTimeout(() => URL.revokeObjectURL(previewUrl), 100);
+        // Delay revoking the Blob URL to ensure the tab loads fully
+        previewWindow.onload = () => URL.revokeObjectURL(previewUrl);
     }
 });
+
 
 
 
