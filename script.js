@@ -163,8 +163,14 @@ function resetFacts() {
 factButton.addEventListener("click", getRandomFact);
 resetButton.addEventListener("click", resetFacts);
 `);
+jsEditor.setOptions({
+    fontSize: "14px",
+    showPrintMargin: false,
+    wrap: true,
+    showLineNumbers: true,
+    tabSize: 2
+});
 
-// Tab Switching Functionality
 const tabButtons = document.querySelectorAll(".tab-button");
 const codeEditors = document.querySelectorAll(".code-editor");
 
@@ -180,7 +186,6 @@ tabButtons.forEach(button => {
   });
 });
 
-// Popout Window Functionality
 document.getElementById("popoutBtn").addEventListener("click", () => {
     const htmlContent = htmlEditor.getValue();
     const cssContent = `<style>${cssEditor.getValue()}</style>`;
@@ -203,89 +208,8 @@ document.getElementById("popoutBtn").addEventListener("click", () => {
     }
 });
 
-// Function to encode content to Base64
-function toBase64(str) {
-    return btoa(unescape(encodeURIComponent(str))); // Convert to Base64
-}
 
-// Function to decode Base64 content
-function fromBase64(base64Str) {
-    return decodeURIComponent(escape(atob(base64Str))); // Convert from Base64
-}
-
-// Update the URL with Base64-encoded content
-function updateUrl() {
-    const htmlContent = htmlEditor.getValue();
-    const cssContent = cssEditor.getValue();
-    const jsContent = jsEditor.getValue();
-
-    // Encode the content to Base64
-    const encodedHtml = toBase64(htmlContent);
-    const encodedCss = toBase64(cssContent);
-    const encodedJs = toBase64(jsContent);
-
-    // Create the shareable URL
-    const shareableUrl = `${window.location.origin}?html=${encodedHtml}&css=${encodedCss}&js=${encodedJs}`;
-
-    // Update the URL in the browser's address bar without reloading the page
-    window.history.replaceState(null, "", shareableUrl);
-
-    // Display the shareable URL to the user
-    const shareUrlText = document.getElementById("share-url-text");
-    shareUrlText.innerHTML = `Your Shareable URL: <a href="${shareableUrl}" target="_blank">${shareableUrl}</a>`;
-}
-
-// Add a copy URL button functionality
-function copyToClipboard() {
-    const urlText = document.getElementById("share-url-text").textContent.trim();
-    const textArea = document.createElement("textarea");
-    textArea.value = urlText;
-    document.body.appendChild(textArea);
-    textArea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textArea);
-    alert('URL copied to clipboard!');
-}
-
-// Load content from the URL and decode it
-function loadContentFromUrl() {
-    const params = new URLSearchParams(window.location.search);
-
-    // Get the Base64 content from the URL
-    const htmlContent = params.get('html');
-    const cssContent = params.get('css');
-    const jsContent = params.get('js');
-
-    // Decode and set the content in the editors
-    if (htmlContent) {
-        htmlEditor.setValue(fromBase64(htmlContent), -1);
-    }
-    if (cssContent) {
-        cssEditor.setValue(fromBase64(cssContent), -1);
-    }
-    if (jsContent) {
-        jsEditor.setValue(fromBase64(jsContent), -1);
-    }
-
-    // Update the preview with the loaded content
-    updatePreview();
-}
-
-// Call the function to load content from the URL when the page loads
-window.addEventListener("load", loadContentFromUrl);
-
-// Event listener for the "Generate Shareable URL" button
-document.getElementById("shareBtn").addEventListener("click", updateUrl);
-
-// Event listener for the "Copy URL" button
-document.getElementById("copyBtn").addEventListener("click", copyToClipboard);
-
-// Event listeners to update preview dynamically as you type in the editors
-htmlEditor.session.on('change', updatePreview);
-cssEditor.session.on('change', updatePreview);
-jsEditor.session.on('change', updatePreview);
-
-// Preview update function
+// Consolidated updatePreview function
 function updatePreview() {
     const htmlContent = htmlEditor.getValue();
     const cssContent = `<style>${cssEditor.getValue()}</style>`;
@@ -319,3 +243,70 @@ function loadContentFromLocalStorage() {
 
 // Call the function to load saved content when the page loads
 window.addEventListener("load", loadContentFromLocalStorage);
+
+// Encode content to Base64 for URL
+function toBase64(str) {
+    return btoa(unescape(encodeURIComponent(str))); // Convert to Base64
+}
+
+// Decode Base64 content
+function fromBase64(base64Str) {
+    return decodeURIComponent(escape(atob(base64Str))); // Convert from Base64
+}
+
+// Update the URL dynamically with Base64 encoded content
+function updateUrl() {
+    const htmlContent = htmlEditor.getValue();
+    const cssContent = cssEditor.getValue();
+    const jsContent = jsEditor.getValue();
+
+    // Encode the content to Base64
+    const encodedHtml = toBase64(htmlContent);
+    const encodedCss = toBase64(cssContent);
+    const encodedJs = toBase64(jsContent);
+
+    // Create the shareable URL
+    const shareableUrl = `${window.location.origin}?html=${encodedHtml}&css=${encodedCss}&js=${encodedJs}`;
+
+    // Update the URL in the browser's address bar without reloading the page
+    window.history.replaceState(null, "", shareableUrl);
+
+    // Display the shareable URL to the user
+    const shareUrlText = document.getElementById("share-url-text");
+    shareUrlText.innerHTML = `Your Shareable URL: <a href="${shareableUrl}" target="_blank">${shareableUrl}</a>`;
+}
+
+// Load content from the URL and decode it
+function loadContentFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+
+    // Get the Base64 content from the URL
+    const htmlContent = params.get('html');
+    const cssContent = params.get('css');
+    const jsContent = params.get('js');
+
+    // Decode and set the content in the editors
+    if (htmlContent) {
+        htmlEditor.setValue(fromBase64(htmlContent), -1);
+    }
+    if (cssContent) {
+        cssEditor.setValue(fromBase64(cssContent), -1);
+    }
+    if (jsContent) {
+        jsEditor.setValue(fromBase64(jsContent), -1);
+    }
+
+    // Update the preview with the loaded content
+    updatePreview();
+}
+
+// Call the function to load content from the URL when the page loads
+window.addEventListener("load", loadContentFromUrl);
+
+// Event listener for the "Generate Shareable URL" button
+document.getElementById("shareBtn").addEventListener("click", updateUrl);
+
+// Event listeners to update preview dynamically as you type in the editors
+htmlEditor.session.on('change', updatePreview);
+cssEditor.session.on('change', updatePreview);
+jsEditor.session.on('change', updatePreview);
