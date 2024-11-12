@@ -157,3 +157,11 @@ header select {
       height:50%;
   }
 }
+
+/* Resizable Handle Styling */
+.resize-handle {
+    cursor: ew-resize;
+    width: 5px;
+    background-color: #ccc;
+    margin-top: 20px;
+}
