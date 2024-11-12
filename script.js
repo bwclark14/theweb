@@ -270,7 +270,7 @@ document.getElementById("popoutBtn").addEventListener("click", () => {
 
 
 //
-
+/*
 
 // Function to encode content to Base64
 function toBase64(str) {
@@ -349,3 +349,4 @@ function updatePreview() {
 // Add an event listener for the "Generate Shareable URL" button
 document.getElementById("shareBtn").addEventListener("click", updateUrl);
 
+*/
