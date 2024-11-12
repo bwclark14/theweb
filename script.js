@@ -270,18 +270,30 @@ document.getElementById("popoutBtn").addEventListener("click", () => {
 
 
 //
-// Function to encode content to Base64
+// Initialize the Ace editors
+const htmlEditor = ace.edit("html-editor");
+htmlEditor.setTheme("ace/theme/monokai");
+htmlEditor.session.setMode("ace/mode/html");
+
+const cssEditor = ace.edit("css-editor");
+cssEditor.setTheme("ace/theme/monokai");
+cssEditor.session.setMode("ace/mode/css");
+
+const jsEditor = ace.edit("js-editor");
+jsEditor.setTheme("ace/theme/monokai");
+jsEditor.session.setMode("ace/mode/javascript");
+
 // Function to encode content to Base64
 function toBase64(str) {
-    return btoa(unescape(encodeURIComponent(str))); // Converts to Base64
+    return btoa(unescape(encodeURIComponent(str))); // Convert to Base64
 }
 
 // Function to decode Base64 content
 function fromBase64(base64Str) {
-    return decodeURIComponent(escape(atob(base64Str))); // Converts from Base64
+    return decodeURIComponent(escape(atob(base64Str))); // Convert from Base64
 }
 
-// Update the URL with the latest content
+// Function to update the URL dynamically
 function updateUrl() {
     const htmlContent = htmlEditor.getValue();
     const cssContent = cssEditor.getValue();
@@ -292,11 +304,13 @@ function updateUrl() {
     const encodedCss = toBase64(cssContent);
     const encodedJs = toBase64(jsContent);
 
-    // Update the URL without reloading the page
+    // Create the shareable URL
     const shareableUrl = `${window.location.origin}?html=${encodedHtml}&css=${encodedCss}&js=${encodedJs}`;
+
+    // Update the URL in the browser's address bar without reloading the page
     window.history.replaceState(null, "", shareableUrl);
 
-    // Display the shareable URL in the UI
+    // Display the shareable URL to the user
     const shareUrlText = document.getElementById("share-url-text");
     shareUrlText.innerHTML = `Your Shareable URL: <a href="${shareableUrl}" target="_blank">${shareableUrl}</a>`;
 }
@@ -305,15 +319,21 @@ function updateUrl() {
 function loadContentFromUrl() {
     const params = new URLSearchParams(window.location.search);
 
-    // Get the content for HTML, CSS, and JavaScript from the URL
+    // Get the Base64 content from the URL
     const htmlContent = params.get('html');
     const cssContent = params.get('css');
     const jsContent = params.get('js');
 
     // Decode the Base64 content and set it in the editors
-    if (htmlContent) htmlEditor.setValue(fromBase64(htmlContent), -1);
-    if (cssContent) cssEditor.setValue(fromBase64(cssContent), -1);
-    if (jsContent) jsEditor.setValue(fromBase64(jsContent), -1);
+    if (htmlContent) {
+        htmlEditor.setValue(fromBase64(htmlContent), -1);
+    }
+    if (cssContent) {
+        cssEditor.setValue(fromBase64(cssContent), -1);
+    }
+    if (jsContent) {
+        jsEditor.setValue(fromBase64(jsContent), -1);
+    }
 
     // Update the preview with the loaded content
     updatePreview();
@@ -322,7 +342,7 @@ function loadContentFromUrl() {
 // Call the function to load content from the URL when the page loads
 window.addEventListener("load", loadContentFromUrl);
 
-// Function to update the preview iframe
+// Function to update the preview iframe with the content
 function updatePreview() {
     const iframe = document.getElementById("preview");
     const htmlContent = htmlEditor.getValue();
@@ -339,3 +359,4 @@ function updatePreview() {
 
 // Add an event listener for the "Generate Shareable URL" button
 document.getElementById("shareBtn").addEventListener("click", updateUrl);
+
