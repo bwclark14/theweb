@@ -10,9 +10,6 @@
     <!-- Header -->
     <header>
         <h1>Live Code Editor</h1>
-        <button id="downloadBtn">Download Files</button>
-        <input type="file" id="uploadBtn" style="display:none" accept=".html,.css,.js">
-        <label for="uploadBtn" class="upload-label">Upload File</label>
     </header>
 
     <!-- Main Container -->
@@ -37,20 +34,21 @@
         </div>
 
         <!-- Resizable Handle -->
-        <div class="resize-handle"></div>
+        <div class="resize-handle" id="resizeHandle"></div>
 
         <!-- Preview Container -->
         <div class="preview-container">
             <div class="preview-header">
                 <button id="popoutBtn" class="popout-btn">Popout Preview</button>
+                <button id="downloadBtn" class="download-btn">Download</button>
+                <input type="file" id="uploadBtn" class="upload-btn" accept=".html,.css,.js,.zip">
             </div>
             <iframe id="preview" class="preview"></iframe>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.2.2/jszip.min.js"></script>
     <script src="script.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
-
 </body>
 </html>
