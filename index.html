@@ -10,6 +10,9 @@
     <!-- Header -->
     <header>
         <h1>Live Code Editor</h1>
+        <button id="downloadBtn">Download Files</button>
+        <input type="file" id="uploadBtn" style="display:none" accept=".html,.css,.js">
+        <label for="uploadBtn" class="upload-label">Upload File</label>
     </header>
 
     <!-- Main Container -->
@@ -32,6 +35,9 @@
             <!-- JavaScript Editor -->
             <div id="js-editor" class="code-editor"></div>
         </div>
+
+        <!-- Resizable Handle -->
+        <div class="resize-handle"></div>
 
         <!-- Preview Container -->
         <div class="preview-container">
